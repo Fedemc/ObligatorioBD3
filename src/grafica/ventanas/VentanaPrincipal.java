@@ -78,14 +78,13 @@ public class VentanaPrincipal
 		JButton btnListarTemporadas = new JButton("Listar Temporadas");
 		btnListarTemporadas.setBounds(48, 47, 121, 23);
 		panel.add(btnListarTemporadas);
-		btnListarTemporadas.addActionListener(new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						VentanaListarTemporadas ventListarTemp = new VentanaListarTemporadas();
-						ventListarTemp.setVisible(true);
-					}
-				});
+		btnListarTemporadas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				VentanaListarTemporadas ventListarTemp = new VentanaListarTemporadas();
+				ventListarTemp.setVisible(true);
+			}
+		});
 		
 		
 		JButton btnTempMasParticipantes = new JButton("Temporada con mas participantes");
@@ -100,6 +99,13 @@ public class VentanaPrincipal
 		JButton btnInscribirDragQueen = new JButton("Inscribir DragQueen");
 		btnInscribirDragQueen.setBounds(10, 23, 121, 23);
 		panel_1.add(btnInscribirDragQueen);
+		btnInscribirDragQueen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				VentanaInscribirDragQueen ventInscribirDQ = new VentanaInscribirDragQueen();
+				ventInscribirDQ.setVisible(true);
+			}
+		});
 		
 		JButton btnRegistrarVictoria = new JButton("Registrar Victoria");
 		btnRegistrarVictoria.setBounds(10, 91, 121, 23);

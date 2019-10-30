@@ -28,27 +28,44 @@ public class AccesoBD
 		con.commit();
 	}
 	
-	public void InscribirDragQueen(IConexion icon, String nombre, int nroTemp) throws SQLException
+	public void InscribirDragQueen(IConexion icon, String nombre, int nroTemp) throws SQLException, PersistenciaException
 	{
 		Connection con = icon.GetConnection();
 		int nroPart = 0;
-		String cantParticipantesQuery = Consultas.CantParticipantesTemp();
-		PreparedStatement pstmt = con.prepareStatement(cantParticipantesQuery);
-		pstmt.setInt(1, nroTemp);
-		ResultSet rs = pstmt.executeQuery();
+		
+		// Verifico si existe una temporada con ese nro
+		PreparedStatement pstmtExisteNroTemp = con.prepareStatement(Consultas.TempConNroTemp());
+		pstmtExisteNroTemp.setInt(1, nroTemp);
+		ResultSet rs = pstmtExisteNroTemp.executeQuery();
 		if(rs.next())
 		{
-			nroPart = rs.getInt("cantParticipantes");
+			// Existe la temporada
+			// Obtengo la cant de participantes, para poder numerar al nuevo
+			String cantParticipantesQuery = Consultas.CantParticipantesTemp();
+			PreparedStatement pstmt = con.prepareStatement(cantParticipantesQuery);
+			pstmt.setInt(1, nroTemp);
+			rs = pstmt.executeQuery();
+			if(rs.next())
+			{
+				nroPart = rs.getInt("cantParticipantes");
+			}
+			String query = Consultas.InscribirDragQueen();
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, nroPart);
+			pstmt.setString(2, nombre);
+			pstmt.setInt(3, nroTemp);
+			pstmt.executeUpdate();
+			
+			pstmt.close();
+			con.commit();
 		}
-		String query = Consultas.InscribirDragQueen();
-		pstmt = con.prepareStatement(query);
-		pstmt.setInt(1, nroPart);
-		pstmt.setString(2, nombre);
-		pstmt.setInt(3, nroTemp);
-		pstmt.executeUpdate();
+		else
+		{
+			throw new PersistenciaException("ERROR: No existe una temporada registrada con ese nro.");
+		}
 		
-		pstmt.close();
-		con.commit();
+		
+		
 	}
 	
 	public List<VOTemporada> ListarTemporadas(IConexion icon) throws SQLException

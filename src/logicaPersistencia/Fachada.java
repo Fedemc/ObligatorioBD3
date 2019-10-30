@@ -111,6 +111,10 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 			String error = "Error de SQL: " + sqlEx.getMessage();
 			throw new PersistenciaException(error);
 		}
+		catch(PersistenciaException pEx)
+		{
+			throw new PersistenciaException(pEx.DarMensaje());
+		}
 	}
 	
 	/* Listar todas las temporadas */

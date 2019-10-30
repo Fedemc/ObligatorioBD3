@@ -1,33 +1,31 @@
 package grafica.controladores;
 
 import grafica.controladores.ContPrincipal;
-import grafica.ventanas.VentanaListarTemporadas;
+import grafica.ventanas.VentanaInscribirDragQueen;
 import logicaPersistencia.IFachada;
 import logicaPersistencia.excepciones.PersistenciaException;
-import logicaPersistencia.valueObjects.VOTemporada;
+import logicaPersistencia.valueObjects.VODragQueen;
 
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.ArrayList;
 
-public class ContVentanaListarTemporadas
+public class ContVentanaInscribirDragQueen
 {
 	private IFachada iFachada;
-	private VentanaListarTemporadas vent;
+	private VentanaInscribirDragQueen vent;
 	
-	public ContVentanaListarTemporadas(VentanaListarTemporadas v)
+	public ContVentanaInscribirDragQueen(VentanaInscribirDragQueen v)
 	{
 		vent = v;
 		iFachada = ContPrincipal.GetInstancia().GetIFachada();
 	}
 	
-	public void ListarTemporadas()
+	public void InscribirDragQueen(String nom, int nroTemp)
 	{
-		List<VOTemporada> lista = new ArrayList<VOTemporada>();
+		VODragQueen voD = new VODragQueen(nom, nroTemp);
 		try
 		{
-			lista = iFachada.ListarTemporadas();
-			vent.ListarTemporadas(lista);
+			iFachada.InscribirDragQueen(voD);
+			vent.mostrarResultado("Participante inscripto correctamente.");
 		}
 		catch(PersistenciaException pEx)
 		{
@@ -38,4 +36,5 @@ public class ContVentanaListarTemporadas
 			vent.mostrarError(rEx.toString());
 		}
 	}
+	
 }

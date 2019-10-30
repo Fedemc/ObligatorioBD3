@@ -87,6 +87,8 @@ public class VentanaListarTemporadas
 					}
 				}
 		);
+		
+		frmListarTemporadas.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
 	public void setVisible(boolean valor)
