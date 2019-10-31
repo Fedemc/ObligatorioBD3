@@ -113,6 +113,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		}
 		catch(PersistenciaException pEx)
 		{
+			pool.LiberarConexion(icon, false);
 			throw new PersistenciaException(pEx.DarMensaje());
 		}
 	}
@@ -148,19 +149,27 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		return resu;
 	}
 	
-	/* Listar todas las DragQueens */
-	public List<VODragQueenVictorias> ListarDragQueens() throws RemoteException, PersistenciaException
+	/* Listar las DragQueens dada una temporada */
+	public List<VODragQueenVictorias> ListarDragQueens(int nroTemp) throws RemoteException, PersistenciaException
 	{
 		List<VODragQueenVictorias> resu = new ArrayList<VODragQueenVictorias>();
+		IConexion icon = null;
 		try
 		{
-			IConexion icon = pool.ObtenerConexiones(false);
-			resu = abd.ListarDragQueens(icon);
+			icon = pool.ObtenerConexiones(false);
+			resu = abd.ListarDragQueens(icon, nroTemp);
+			pool.LiberarConexion(icon, false);
 		}
 		catch(SQLException sqlEx)
 		{
+			pool.LiberarConexion(icon, false);
 			String error = "Error de SQL: " + sqlEx.getMessage();
 			throw new PersistenciaException(error);
+		}
+		catch(PersistenciaException pEx)
+		{
+			pool.LiberarConexion(icon, false);
+			throw new PersistenciaException(pEx.DarMensaje());
 		}
 		
 		return resu;

@@ -20,7 +20,7 @@ public interface IFachada extends Remote
 	
 	List<VOTemporada> ListarTemporadas() throws RemoteException, PersistenciaException;
 	
-	List<VODragQueenVictorias> ListarDragQueens() throws RemoteException, PersistenciaException;
+	List<VODragQueenVictorias> ListarDragQueens(int nroTemp) throws RemoteException, PersistenciaException;
 	
 	VOTempMaxPart TempMasParticipantes() throws RemoteException, PersistenciaException;
 	

@@ -22,7 +22,7 @@ public class Consultas
 	
 	public static String ListarDragQueens()
 	{
-		String query = "SELECT * FROM DragQueens ORDER BY nroPart";
+		String query = "SELECT * FROM DragQueens where nroTemp = ?";
 		return query;
 	}
 	

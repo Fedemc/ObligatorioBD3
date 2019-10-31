@@ -48,6 +48,7 @@ public class AccesoBD
 			if(rs.next())
 			{
 				nroPart = rs.getInt("cantParticipantes");
+				nroPart++;
 			}
 			String query = Consultas.InscribirDragQueen();
 			pstmt = con.prepareStatement(query);
@@ -63,9 +64,6 @@ public class AccesoBD
 		{
 			throw new PersistenciaException("ERROR: No existe una temporada registrada con ese nro.");
 		}
-		
-		
-		
 	}
 	
 	public List<VOTemporada> ListarTemporadas(IConexion icon) throws SQLException
@@ -86,21 +84,35 @@ public class AccesoBD
 		return resu;
 	}
 	
-	public List<VODragQueenVictorias> ListarDragQueens(IConexion icon) throws SQLException
+	public List<VODragQueenVictorias> ListarDragQueens(IConexion icon, int nroTemp) throws SQLException, PersistenciaException
 	{
 		Connection con = icon.GetConnection();
 		List<VODragQueenVictorias> resu = new ArrayList<VODragQueenVictorias>();
-		String query = Consultas.ListarDragQueens();
-		Statement stmt=con.createStatement();
-		ResultSet rs = stmt.executeQuery(query);
-		while(rs.next())
+		String query = Consultas.TempConNroTemp();
+		PreparedStatement pstmt = con.prepareStatement(query);
+		pstmt.setInt(1, nroTemp);
+		ResultSet rs = pstmt.executeQuery();
+		boolean existe=rs.next();
+		rs.close();
+		if(existe)
 		{
-			VODragQueenVictorias voDQ = new VODragQueenVictorias(rs.getString("nombre"), rs.getInt("nroTemp"), rs.getInt("nroPart"), rs.getInt("cantVictorias"));
-			resu.add(voDQ);
+			query = Consultas.ListarDragQueens();
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, nroTemp);
+			ResultSet rs1 = pstmt.executeQuery();
+			while(rs1.next())
+			{
+				VODragQueenVictorias voDQ = new VODragQueenVictorias(rs1.getString("nombre"), rs1.getInt("nroTemp"), rs1.getInt("nroPart"), rs1.getInt("cantVictorias"));
+				resu.add(voDQ);
+			}
+			rs1.close();
+		}
+		else
+		{
+			throw new PersistenciaException("ERROR: No existe una temporada registrada con ese nro.");
 		}
 		
-		rs.close();
-		stmt.close();
+		pstmt.close();
 		return resu;
 	}
 	

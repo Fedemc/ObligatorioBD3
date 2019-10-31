@@ -114,6 +114,13 @@ public class VentanaPrincipal
 		JButton btnListarDragQueens = new JButton("Listar DragQueens");
 		btnListarDragQueens.setBounds(10, 57, 121, 23);
 		panel_1.add(btnListarDragQueens);
+		btnListarDragQueens.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				VentanaListarDragQueens ventListarDQs = new VentanaListarDragQueens();
+				ventListarDQs.setVisible(true);
+			}
+		});
 		
 		JButton btnObtenerGanadora = new JButton("Obtener Ganadora");
 		btnObtenerGanadora.setBounds(10, 125, 121, 23);
