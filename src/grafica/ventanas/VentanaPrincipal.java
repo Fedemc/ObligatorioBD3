@@ -90,6 +90,13 @@ public class VentanaPrincipal
 		JButton btnTempMasParticipantes = new JButton("Temporada con mas participantes");
 		btnTempMasParticipantes.setBounds(10, 81, 193, 23);
 		panel.add(btnTempMasParticipantes);
+		btnTempMasParticipantes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				VentanaTempMasPart ventTempMasPart = new VentanaTempMasPart();
+				ventTempMasPart.setVisible(true);
+			}
+		});
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setLayout(null);

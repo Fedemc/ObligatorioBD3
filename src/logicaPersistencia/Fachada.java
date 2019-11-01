@@ -158,7 +158,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		{
 			icon = pool.ObtenerConexiones(false);
 			resu = abd.ListarDragQueens(icon, nroTemp);
-			pool.LiberarConexion(icon, false);
+			pool.LiberarConexion(icon, true);
 		}
 		catch(SQLException sqlEx)
 		{
@@ -178,52 +178,23 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	// Verificar q al menos exista una temporada
 	public VOTempMaxPart TempMasParticipantes() throws RemoteException, PersistenciaException
 	{
-		int max = 0;
-		int nroTempMax = 0;
-		int cantParts = 0;
-		boolean error = false;
-		VOTempMaxPart resu = new VOTempMaxPart(1,1,1,1);
-		// Traerme todas las temporadas
-		// Ver cual tiene mas participantes
-		// Devolver nro Temp y ejecutar TempConNroTemp
-		List<VOTemporada> listaTemporadas = new ArrayList<VOTemporada>();
-		try
-		{
-			IConexion icon = pool.ObtenerConexiones(false);
-			listaTemporadas = abd.ListarTemporadas(icon);
-			if(listaTemporadas.isEmpty())
-			{
-				error=true;
-			}
-			else
-			{
-				for(VOTemporada t : listaTemporadas)
-				{
-					int nroTemp = t.getNroTemp();
-					int cantParticipantes = abd.CantParticipantesTemp(icon, nroTemp);
-					if(cantParticipantes > max)
-					{
-						max = cantParticipantes;
-						nroTempMax = nroTemp;
-						cantParts = cantParticipantes;
-					}
-				}
-				
-				// Me traigo el VO de la temporada con mas participantes
-				VOTemporada voT = abd.TempConNroTemp(icon, nroTempMax);
-				resu = new VOTempMaxPart(voT.getAnio(), voT.getNroTemp(), voT.getCantCapitulos(), cantParts);
-			}
-		}
-		catch(SQLException sqlEx)
-		{
-			String msj = "Error de SQL: " + sqlEx.getMessage();
-			throw new PersistenciaException(msj);
-		}
+		VOTempMaxPart resu = null;
+		IConexion icon = null;
 		
-		if(error)
-		{	
-			String msj = "ERROR: No existen Temporadas registradas en el sistema.";
-			throw new PersistenciaException(msj);
+		try {
+			icon = pool.ObtenerConexiones(false);
+			List<VOTemporada> lista = abd.ListarTemporadas(icon);
+			if (lista.size() > 0)
+				resu = abd.TempConMasParticipantes(icon);
+			
+			pool.LiberarConexion(icon, true);
+		} catch (SQLException e) {
+			pool.LiberarConexion(icon, false);
+			String error = "Error de SQL: " + e.getMessage();
+			throw new PersistenciaException(error);
+		} catch (PersistenciaException e) {
+			pool.LiberarConexion(icon, false);
+			throw e;
 		}
 		
 		return resu;

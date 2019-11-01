@@ -206,7 +206,25 @@ public class AccesoBD
 			resu = new VODragQueen(rs.getString("nombre"), rs.getInt("nroTemp"));
 		}
 		
+		rs.close();
+		pstmt.close();
 		return resu;
 	}	
+	
+	public VOTempMaxPart TempConMasParticipantes(IConexion icon) throws SQLException
+	{
+		Connection con = icon.GetConnection();
+		VOTempMaxPart resu = null;
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery(Consultas.TempMaxParticipantes());
+		if (rs.next()) {
+			resu = new VOTempMaxPart(rs.getInt("nroTemp"), rs.getInt("nroAnio"), rs.getInt("cantCaps"), rs.getInt("cantParticipantes"));
+		}
+		
+		rs.close();
+		stmt.close();
+		
+		return resu;
+	}
 	
 }

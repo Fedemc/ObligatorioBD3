@@ -58,4 +58,11 @@ public class Consultas
 		String query = "SELECT nombre, nroTemp FROM DragQueens WHERE nroPart = ?";
 		return query;
 	}
+	
+	public static String TempMaxParticipantes()
+	{
+		return "SELECT t.nroTemp, t.anio, t.cantCaps COUNT(dq.nombre) AS cantParticipantes "
+			 + "FROM temporadas t, dragqueens dq WHERE t.nroTemp = dq.nroTemp "
+			 + "GROUP BY t.nroTemp, t.anio, t.cantCaps ORDER BY COUNT(dq.nombre) DESC LIMIT 1";
+	}
 }
