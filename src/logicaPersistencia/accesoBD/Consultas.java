@@ -2,67 +2,56 @@ package logicaPersistencia.accesoBD;
 
 public class Consultas
 {
-	public static String NuevaTemporada()
+	public static String nuevaTemporada()
 	{
-		String query = "INSERT INTO Temporadas VALUES (?,?,?)";
-		return query;
+		return "INSERT INTO Temporadas VALUES (?,?,?)";
 	}
 	
-	public static String InscribirDragQueen()
+	public static String inscribirDragQueen()
 	{
-		String query = "INSERT INTO DragQueens(nroPart, nombre, nroTemp) VALUES (?,?,?)";
-		return query;
+		return "INSERT INTO DragQueens(nroPart, nombre, nroTemp) VALUES (?,?,?)";
 	}
 	
-	public static String ListarTemporadas()
+	public static String listarTemporadas()
 	{
-		String query = "SELECT * FROM Temporadas ORDER BY nroTemp";
-		return query;
+		return "SELECT * FROM Temporadas ORDER BY nroTemp";
 	}
 	
-	public static String ListarDragQueens()
+	public static String dragQueensDeTemporada()
 	{
-		String query = "SELECT * FROM DragQueens where nroTemp = ?";
-		return query;
+		return "SELECT * FROM DragQueens where nroTemp = ?";
 	}
 	
-	public static String TempConNroTemp()
+	public static String temporadaConNumero()
 	{
-		String query = "SELECT * FROM Temporadas WHERE nroTemp = ?";
-		return query;
+		return "SELECT * FROM Temporadas WHERE nroTemp = ?";
 	}
 		
 	/* Dado un nro de temporada cuenta la cantidad de DragQueens que participaron en la temporada */
-	public static String CantParticipantesTemp()
+	public static String cantidadParticipantesDeTemporada()
 	{
-		String query = "SELECT COUNT(*) cantParticipantes FROM DragQueens WHERE nroTemp = ?";
-		return query;
+		return "SELECT COUNT(*) cantParticipantes FROM DragQueens WHERE nroTemp = ?";
 	}
 	
-	public static String RegistrarVictoria() 
+	public static String registrarVictoria() 
 	{
-		String query = "UPDATE DragQueens SET cantVictorias=cantVictorias+1 WHERE nroPart = ? AND nroTemp = ?";
-		return query;
+		return "UPDATE DragQueens SET cantVictorias=cantVictorias+1 WHERE nroPart = ? AND nroTemp = ?";
 	}
 	
 	/* Dado una temporada devuelve la cantidad de victorias de cada drag queen. Iterar sobre el RS 
 	 * devuelto para encontrar la que tenga mas victorias.*/
-	public static String NroPartDragQueenConMasVictorias()
+	public static String cantidadDeVictoriasDeDragQueensDeTemporada()
 	{
-		String query = "SELECT nroPart, cantVictorias FROM DragQueens WHERE nroTemp = ? ORDER BY nroPart";
-		return query;
+		return "SELECT nroPart, cantVictorias FROM DragQueens WHERE nroTemp = ? ORDER BY nroPart";
 	}
 	
-	public static String DragQueenConNroPart()
+	public static String dragQueenPorNumeroDeParticipante()
 	{
-		String query = "SELECT nombre, nroTemp FROM DragQueens WHERE nroPart = ?";
-		return query;
+		return "SELECT nombre, nroTemp FROM DragQueens WHERE nroPart = ?";
 	}
 	
-	public static String TempMaxParticipantes()
+	public static String temporadaConMasParticipantes()
 	{
-		return "SELECT t.nroTemp, t.anio, t.cantCaps COUNT(dq.nombre) AS cantParticipantes "
-			 + "FROM temporadas t, dragqueens dq WHERE t.nroTemp = dq.nroTemp "
-			 + "GROUP BY t.nroTemp, t.anio, t.cantCaps ORDER BY COUNT(dq.nombre) DESC LIMIT 1";
+		return "SELECT t.nroTemp, MAX(t.anio) AS nroAnio, MAX(t.cantCapitulos) AS cantCaps, COUNT(dq.nombre) AS cantParticipantes FROM temporadas t, dragqueens dq WHERE t.nroTemp = dq.nroTemp GROUP BY t.nroTemp ORDER BY COUNT(dq.nombre) DESC LIMIT 1";
 	}
 }

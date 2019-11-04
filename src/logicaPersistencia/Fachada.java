@@ -13,32 +13,37 @@ import logicaPersistencia.valueObjects.*;
 
 public class Fachada extends UnicastRemoteObject implements IFachada
 {
+	private static Fachada fachada;
 	
-	private static Fachada instancia;
 	private AccesoBD abd;
+	
 	private IPoolConexiones pool;
 	
+	/**
+	 * Creación del objeto.
+	 * @throws RemoteException
+	 */
 	private Fachada() throws RemoteException
 	{
 		abd = new AccesoBD();
-		try
-		{
+		try {
 			pool = new PoolConexiones();
-		}
-		catch(PersistenciaException pEx)
-		{
-			System.out.println(pEx.toString());
+		} catch(PersistenciaException e) {
+			e.printStackTrace();
 		}
 		
 	}
 	
-	public static Fachada GetInstancia() 
+	/**
+	 * Devuelve la instancia de la fachada.
+	 * @return
+	 */
+	public static Fachada getInstancia() 
 	{
-		if(instancia == null)
-		{
+		if(fachada == null) {
 			try
 			{
-				instancia = new Fachada();
+				fachada = new Fachada();
 			}
 			catch(RemoteException rEx)
 			{
@@ -47,11 +52,11 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 			
 		}
 		
-		return instancia;
+		return fachada;
 	}
 	
 	/* Registrar una nueva temporada */
-	public void NuevaTemporada(VOTemporada voT) throws RemoteException, PersistenciaException
+	public void nuevaTemporada(VOTemporada voT) throws RemoteException, PersistenciaException
 	{
 		int nroTemp = voT.getNroTemp();
 		boolean existe=false;
@@ -95,7 +100,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	}
 	
 	/* Inscribir una nueva DragQueen */
-	public void InscribirDragQueen(VODragQueen voD) throws RemoteException, PersistenciaException
+	public void inscribirDragQueen(VODragQueen voD) throws RemoteException, PersistenciaException
 	{
 		IConexion icon = pool.ObtenerConexiones(true);
 		String nombre = voD.getNombre();
@@ -114,12 +119,12 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		catch(PersistenciaException pEx)
 		{
 			pool.LiberarConexion(icon, false);
-			throw new PersistenciaException(pEx.DarMensaje());
+			throw new PersistenciaException(pEx.getMessage());
 		}
 	}
 	
 	/* Listar todas las temporadas */
-	public List<VOTemporada> ListarTemporadas() throws RemoteException, PersistenciaException
+	public List<VOTemporada> listarTemporadas() throws RemoteException, PersistenciaException
 	{
 		List<VOTemporada> resu = new ArrayList<VOTemporada>();
 		IConexion icon=null;
@@ -150,7 +155,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	}
 	
 	/* Listar las DragQueens dada una temporada */
-	public List<VODragQueenVictorias> ListarDragQueens(int nroTemp) throws RemoteException, PersistenciaException
+	public List<VODragQueenVictorias> listarDragQueensDeTemporada(int nroTemp) throws RemoteException, PersistenciaException
 	{
 		List<VODragQueenVictorias> resu = new ArrayList<VODragQueenVictorias>();
 		IConexion icon = null;
@@ -169,14 +174,14 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		catch(PersistenciaException pEx)
 		{
 			pool.LiberarConexion(icon, false);
-			throw new PersistenciaException(pEx.DarMensaje());
+			throw new PersistenciaException(pEx.getMessage());
 		}
 		
 		return resu;
 	}
 	
 	// Verificar q al menos exista una temporada
-	public VOTempMaxPart TempMasParticipantes() throws RemoteException, PersistenciaException
+	public VOTempMaxPart temporadaConMasParticipantes() throws RemoteException, PersistenciaException
 	{
 		VOTempMaxPart resu = null;
 		IConexion icon = null;
@@ -200,8 +205,9 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		return resu;
 	}
 	
-	public void RegistrarVictoria(int nroTemp, int nroPart) throws RemoteException, PersistenciaException
+	public void registrarVictoria(VODragQueenRegistrarVictoria voRV) throws RemoteException, PersistenciaException
 	{
+		/*
 		boolean errorVOT=false, errorVODQ=false;
 		
 		try
@@ -237,9 +243,31 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 			String msj = "Error de SQL: " + sqlEx.getMessage();
 			throw new PersistenciaException(msj);
 		}
+		*/
+		
+		IConexion icon = pool.ObtenerConexiones(true);
+		int nroParticipante = voRV.getNroPart();
+		int nroTemporada= voRV.getNroTemp();
+		try
+		{
+			 
+			abd.RegistrarVictoria(icon, nroParticipante, nroTemporada);
+			pool.LiberarConexion(icon, true);
+		}
+		catch(SQLException sqlEx)
+		{
+			pool.LiberarConexion(icon, false);
+			String error = "Error de SQL: " + sqlEx.getMessage();
+			throw new PersistenciaException(error);
+		}
+		catch(PersistenciaException pEx)
+		{
+			pool.LiberarConexion(icon, false);
+			throw new PersistenciaException(pEx.getMessage());
+		}
 	}
 	
-	public VODragQueenVictorias ObtenerGanadora(int nroTemp) throws RemoteException, PersistenciaException
+	public VODragQueenVictorias obtenerGanadoraDeTemporada(int nroTemp) throws RemoteException, PersistenciaException
 	{
 		VODragQueenVictorias resu = new VODragQueenVictorias("",1,1,1);
 		boolean errorVOT = false, errorNoHayDQs = false;

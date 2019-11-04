@@ -1,8 +1,10 @@
 package grafica.ventanas;
 
-import grafica.controladores.ContVentanaNuevaTemporada;
+import grafica.controladores.ControladorNuevaTemporada;
+import logicaPersistencia.excepciones.PersistenciaException;
 
 import java.awt.event.*;
+import java.rmi.RemoteException;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -10,6 +12,11 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import java.awt.Font;
+import javax.swing.border.BevelBorder;
+import java.awt.SystemColor;
 
 public class VentanaNuevaTemporada
 {
@@ -19,7 +26,7 @@ public class VentanaNuevaTemporada
 	private JTextField txtAnio;
 	private JTextField txtCantCapitulos;
 	private JButton btnRegistrarNuevaTemporada;
-	private ContVentanaNuevaTemporada cont;
+	private ControladorNuevaTemporada cont;
 
 	/**
 	 * Launch the application.
@@ -56,43 +63,55 @@ public class VentanaNuevaTemporada
 	private void initialize()
 	{
 		frmNuevaTemporada = new JFrame();
+		frmNuevaTemporada.setResizable(false);
 		frmNuevaTemporada.setTitle("Nueva Temporada");
-		frmNuevaTemporada.setBounds(100, 100, 240, 271);
+		frmNuevaTemporada.setBounds(100, 100, 219, 262);
 		frmNuevaTemporada.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmNuevaTemporada.getContentPane().setLayout(null);
 		
+		JPanel panel = new JPanel();
+		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panel.setBounds(10, 35, 187, 147);
+		frmNuevaTemporada.getContentPane().add(panel);
+		panel.setLayout(null);
+		
+		JLabel lblNomTemporada = new JLabel("N\u00FAmero");
+		lblNomTemporada.setBounds(10, 11, 167, 14);
+		panel.add(lblNomTemporada);
+		
 		txtNroTemporada = new JTextField();
-		txtNroTemporada.setBounds(64, 24, 86, 20);
-		frmNuevaTemporada.getContentPane().add(txtNroTemporada);
+		txtNroTemporada.setBounds(10, 26, 167, 20);
+		panel.add(txtNroTemporada);
 		txtNroTemporada.setColumns(10);
 		
-		JLabel lblNomTemporada = new JLabel("Nro de Temporada");
-		lblNomTemporada.setBounds(64, 11, 113, 14);
-		frmNuevaTemporada.getContentPane().add(lblNomTemporada);
-		
 		JLabel lblAo = new JLabel("A\u00F1o");
-		lblAo.setBounds(64, 65, 46, 14);
-		frmNuevaTemporada.getContentPane().add(lblAo);
+		lblAo.setBounds(10, 57, 167, 14);
+		panel.add(lblAo);
 		
 		txtAnio = new JTextField();
+		txtAnio.setBounds(10, 72, 167, 20);
+		panel.add(txtAnio);
 		txtAnio.setColumns(10);
-		txtAnio.setBounds(64, 78, 86, 20);
-		frmNuevaTemporada.getContentPane().add(txtAnio);
 		
 		JLabel lblCantidadDeCaptulos = new JLabel("Cantidad de cap\u00EDtulos");
-		lblCantidadDeCaptulos.setBounds(64, 121, 113, 14);
-		frmNuevaTemporada.getContentPane().add(lblCantidadDeCaptulos);
+		lblCantidadDeCaptulos.setBounds(10, 103, 167, 14);
+		panel.add(lblCantidadDeCaptulos);
 		
 		txtCantCapitulos = new JTextField();
+		txtCantCapitulos.setBounds(10, 119, 167, 20);
+		panel.add(txtCantCapitulos);
 		txtCantCapitulos.setColumns(10);
-		txtCantCapitulos.setBounds(64, 134, 86, 20);
-		frmNuevaTemporada.getContentPane().add(txtCantCapitulos);
+		
+		JLabel lblNuevaTemporada = new JLabel("Nueva temporada");
+		lblNuevaTemporada.setForeground(SystemColor.textHighlight);
+		lblNuevaTemporada.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblNuevaTemporada.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNuevaTemporada.setBounds(10, 10, 187, 14);
+		frmNuevaTemporada.getContentPane().add(lblNuevaTemporada);
 		
 		btnRegistrarNuevaTemporada = new JButton("Registrar");
-		btnRegistrarNuevaTemporada.setBounds(64, 176, 89, 23);
+		btnRegistrarNuevaTemporada.setBounds(84, 193, 113, 23);
 		frmNuevaTemporada.getContentPane().add(btnRegistrarNuevaTemporada);
-		
-		cont = new ContVentanaNuevaTemporada(this);		
 		
 		btnRegistrarNuevaTemporada.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
@@ -100,10 +119,19 @@ public class VentanaNuevaTemporada
 				String nroTemp = txtNroTemporada.getText();
 				String anio = txtAnio.getText();
 				String cantCaps = txtCantCapitulos.getText();
-				cont.InscribirNuevaTemporada(Integer.parseInt(nroTemp), Integer.parseInt(anio), Integer.parseInt(cantCaps));
+				
+				try {
+					cont.nuevaTemporada(Integer.parseInt(nroTemp), Integer.parseInt(anio), Integer.parseInt(cantCaps));
+					JOptionPane.showMessageDialog(frmNuevaTemporada, "Temporada creada correctamente", "Resultado", JOptionPane.INFORMATION_MESSAGE);
+					frmNuevaTemporada.dispose();
+				} catch (NumberFormatException | RemoteException | PersistenciaException e1) {
+					JOptionPane.showMessageDialog(frmNuevaTemporada, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}				
 			}
 			
 		});
+		
+		cont = new ControladorNuevaTemporada(this);		
 		
 		frmNuevaTemporada.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
@@ -111,17 +139,5 @@ public class VentanaNuevaTemporada
 	public void setVisible(boolean valor)
 	{
 		frmNuevaTemporada.setVisible(valor);
-	}
-	
-	public void mostrarError(String res)
-	{
-		JOptionPane.showMessageDialog(frmNuevaTemporada, res, "Error", JOptionPane.ERROR_MESSAGE);
-	}
-	
-	public void mostrarResultado(String res)
-	{
-		
-		JOptionPane.showMessageDialog(frmNuevaTemporada, res, "Resultado", JOptionPane.INFORMATION_MESSAGE);
-		frmNuevaTemporada.dispose();
 	}
 }

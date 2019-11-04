@@ -6,13 +6,12 @@ public class Conexion implements IConexion
 {
 	private Connection con;
 	
-	
 	public Conexion(Connection c)
 	{
 		con = c;
 	}
 	
-	public Connection GetConnection()
+	public Connection getConnection()
 	{
 		return con;
 	}

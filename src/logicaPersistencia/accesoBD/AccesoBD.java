@@ -16,8 +16,8 @@ public class AccesoBD
 {
 	public void NuevaTemporada(IConexion icon, int nroTemp, int anio, int cantCapitulos) throws SQLException 
 	{
-		Connection con = icon.GetConnection();
-		String query = Consultas.NuevaTemporada();
+		Connection con = icon.getConnection();
+		String query = Consultas.nuevaTemporada();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		pstmt.setInt(1, nroTemp);
 		pstmt.setInt(2, anio);
@@ -30,18 +30,18 @@ public class AccesoBD
 	
 	public void InscribirDragQueen(IConexion icon, String nombre, int nroTemp) throws SQLException, PersistenciaException
 	{
-		Connection con = icon.GetConnection();
+		Connection con = icon.getConnection();
 		int nroPart = 0;
 		
 		// Verifico si existe una temporada con ese nro
-		PreparedStatement pstmtExisteNroTemp = con.prepareStatement(Consultas.TempConNroTemp());
+		PreparedStatement pstmtExisteNroTemp = con.prepareStatement(Consultas.temporadaConNumero());
 		pstmtExisteNroTemp.setInt(1, nroTemp);
 		ResultSet rs = pstmtExisteNroTemp.executeQuery();
 		if(rs.next())
 		{
 			// Existe la temporada
 			// Obtengo la cant de participantes, para poder numerar al nuevo
-			String cantParticipantesQuery = Consultas.CantParticipantesTemp();
+			String cantParticipantesQuery = Consultas.cantidadParticipantesDeTemporada();
 			PreparedStatement pstmt = con.prepareStatement(cantParticipantesQuery);
 			pstmt.setInt(1, nroTemp);
 			rs = pstmt.executeQuery();
@@ -50,7 +50,7 @@ public class AccesoBD
 				nroPart = rs.getInt("cantParticipantes");
 				nroPart++;
 			}
-			String query = Consultas.InscribirDragQueen();
+			String query = Consultas.inscribirDragQueen();
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, nroPart);
 			pstmt.setString(2, nombre);
@@ -68,9 +68,9 @@ public class AccesoBD
 	
 	public List<VOTemporada> ListarTemporadas(IConexion icon) throws SQLException
 	{
-		Connection con = icon.GetConnection();
+		Connection con = icon.getConnection();
 		List<VOTemporada> resu = new ArrayList<VOTemporada>();
-		String query = Consultas.ListarTemporadas();
+		String query = Consultas.listarTemporadas();
 		Statement stmt=con.createStatement();
 		ResultSet rs = stmt.executeQuery(query);
 		while(rs.next())
@@ -86,9 +86,9 @@ public class AccesoBD
 	
 	public List<VODragQueenVictorias> ListarDragQueens(IConexion icon, int nroTemp) throws SQLException, PersistenciaException
 	{
-		Connection con = icon.GetConnection();
+		Connection con = icon.getConnection();
 		List<VODragQueenVictorias> resu = new ArrayList<VODragQueenVictorias>();
-		String query = Consultas.TempConNroTemp();
+		String query = Consultas.temporadaConNumero();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		pstmt.setInt(1, nroTemp);
 		ResultSet rs = pstmt.executeQuery();
@@ -96,7 +96,7 @@ public class AccesoBD
 		rs.close();
 		if(existe)
 		{
-			query = Consultas.ListarDragQueens();
+			query = Consultas.dragQueensDeTemporada();
 			pstmt = con.prepareStatement(query);
 			pstmt.setInt(1, nroTemp);
 			ResultSet rs1 = pstmt.executeQuery();
@@ -119,9 +119,9 @@ public class AccesoBD
 	/* Verificar que exista el nroTemp en la tabla antes de ejecutar la consulta */
 	public VOTemporada TempConNroTemp(IConexion icon, int nroTemp) throws SQLException
 	{
-		Connection con = icon.GetConnection(); 
+		Connection con = icon.getConnection(); 
 		VOTemporada resu = null;
-		String query = Consultas.TempConNroTemp();
+		String query = Consultas.temporadaConNumero();
 		PreparedStatement pstmt=con.prepareStatement(query);
 		pstmt.setInt(1, nroTemp);
 		ResultSet rs=pstmt.executeQuery();
@@ -139,9 +139,9 @@ public class AccesoBD
 	
 	public int CantParticipantesTemp(IConexion icon, int nroTemp) throws SQLException
 	{
-		Connection con = icon.GetConnection();
+		Connection con = icon.getConnection();
 		int resu=0;
-		String query = Consultas.CantParticipantesTemp();
+		String query = Consultas.cantidadParticipantesDeTemporada();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		pstmt.setInt(1, nroTemp);
 		ResultSet rs = pstmt.executeQuery();
@@ -158,8 +158,8 @@ public class AccesoBD
 	
 	public void RegistrarVictoria(IConexion icon, int nroTemp, int nroPart) throws SQLException
 	{
-		Connection con = icon.GetConnection();
-		String query = Consultas.RegistrarVictoria();
+		Connection con = icon.getConnection();
+		String query = Consultas.registrarVictoria();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		pstmt.setInt(1, nroPart);
 		pstmt.setInt(2, nroTemp);
@@ -169,10 +169,10 @@ public class AccesoBD
 	
 	public VODragQueenVictorias NroPartDragQueenConMasVictorias(IConexion icon, int nroTemp) throws SQLException
 	{
-		Connection con = icon.GetConnection();
+		Connection con = icon.getConnection();
 		int nroPart = 0;
 		int mayor = 0;
-		String query = Consultas.NroPartDragQueenConMasVictorias();
+		String query = Consultas.cantidadDeVictoriasDeDragQueensDeTemporada();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		pstmt.setInt(1, nroTemp);
 		ResultSet rs = pstmt.executeQuery();
@@ -195,9 +195,9 @@ public class AccesoBD
 	
 	public VODragQueen DragQueenConNroPart(IConexion icon, int nroPart) throws SQLException
 	{
-		Connection con = icon.GetConnection();
+		Connection con = icon.getConnection();
 		VODragQueen resu = null;
-		String query = Consultas.DragQueenConNroPart();
+		String query = Consultas.dragQueenPorNumeroDeParticipante();
 		PreparedStatement pstmt = con.prepareStatement(query);
 		pstmt.setInt(1, nroPart);
 		ResultSet rs = pstmt.executeQuery();
@@ -213,10 +213,10 @@ public class AccesoBD
 	
 	public VOTempMaxPart TempConMasParticipantes(IConexion icon) throws SQLException
 	{
-		Connection con = icon.GetConnection();
+		Connection con = icon.getConnection();
 		VOTempMaxPart resu = null;
 		Statement stmt = con.createStatement();
-		ResultSet rs = stmt.executeQuery(Consultas.TempMaxParticipantes());
+		ResultSet rs = stmt.executeQuery(Consultas.temporadaConMasParticipantes());
 		if (rs.next()) {
 			resu = new VOTempMaxPart(rs.getInt("nroTemp"), rs.getInt("nroAnio"), rs.getInt("cantCaps"), rs.getInt("cantParticipantes"));
 		}

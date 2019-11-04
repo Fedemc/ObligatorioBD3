@@ -113,8 +113,8 @@ public class PoolConexiones implements IPoolConexiones
 		}
 		try
 		{
-			conexion.GetConnection().setAutoCommit(false);
-			conexion.GetConnection().setTransactionIsolation(nivelTransaccionalidad);
+			conexion.getConnection().setAutoCommit(false);
+			conexion.getConnection().setTransactionIsolation(nivelTransaccionalidad);
 		}
 		catch(SQLException sqlEx)
 		{
@@ -127,7 +127,7 @@ public class PoolConexiones implements IPoolConexiones
 	
 	public synchronized void LiberarConexion(IConexion conexion, boolean ok) throws PersistenciaException
 	{
-		Connection con = conexion.GetConnection();
+		Connection con = conexion.getConnection();
 		
 		if(ok)
 		{

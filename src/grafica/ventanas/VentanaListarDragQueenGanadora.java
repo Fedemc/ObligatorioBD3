@@ -1,6 +1,6 @@
 package grafica.ventanas;
 
-import grafica.controladores.ControladorListarDragQueens;
+import grafica.controladores.ControladorListarDragQueenGanadora;
 import logicaPersistencia.excepciones.PersistenciaException;
 import logicaPersistencia.valueObjects.VODragQueenVictorias;
 
@@ -26,12 +26,12 @@ import javax.swing.SwingConstants;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
-public class VentanaListarDragQueens
+public class VentanaListarDragQueenGanadora
 {
 
-	private JFrame frmListarDragqueens;
+	private JFrame frmListarDragQueenGanadora;
 	private JTable tblDatos;
-	private ControladorListarDragQueens cont;
+	private ControladorListarDragQueenGanadora cont;
 	private JTextField txtNroTemp;
 
 	/**
@@ -45,8 +45,8 @@ public class VentanaListarDragQueens
 			{
 				try
 				{
-					VentanaListarDragQueens window = new VentanaListarDragQueens();
-					window.frmListarDragqueens.setVisible(true);
+					VentanaListarDragQueenGanadora window = new VentanaListarDragQueenGanadora();
+					window.frmListarDragQueenGanadora.setVisible(true);
 				} catch (Exception e)
 				{
 					e.printStackTrace();
@@ -58,7 +58,7 @@ public class VentanaListarDragQueens
 	/**
 	 * Create the application.
 	 */
-	public VentanaListarDragQueens()
+	public VentanaListarDragQueenGanadora()
 	{
 		initialize();
 	}
@@ -68,12 +68,12 @@ public class VentanaListarDragQueens
 	 */
 	private void initialize()
 	{
-		cont = new ControladorListarDragQueens(this);
-		frmListarDragqueens = new JFrame();
-		frmListarDragqueens.setTitle("Listado de Drag Queens por temporada");
-		frmListarDragqueens.setBounds(100, 100, 300, 470);
-		frmListarDragqueens.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmListarDragqueens.getContentPane().setLayout(null);
+		cont = new ControladorListarDragQueenGanadora(this);
+		frmListarDragQueenGanadora = new JFrame();
+		frmListarDragQueenGanadora.setTitle("Listado de Drag Queens por temporada");
+		frmListarDragQueenGanadora.setBounds(100, 100, 300, 470);
+		frmListarDragQueenGanadora.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmListarDragQueenGanadora.getContentPane().setLayout(null);
 		
 		tblDatos = new JTable();
 		tblDatos.setBorder(UIManager.getBorder("ComboBox.border"));
@@ -81,24 +81,24 @@ public class VentanaListarDragQueens
 		
 		JScrollPane scrollPane = new JScrollPane(tblDatos);
 		scrollPane.setBounds(10, 103, 264, 314);
-		frmListarDragqueens.getContentPane().add(scrollPane);
+		frmListarDragQueenGanadora.getContentPane().add(scrollPane);
 		
 		JLabel lblListadoDeDrag = new JLabel("Listado de Drag Queens por temporada");
 		lblListadoDeDrag.setHorizontalAlignment(SwingConstants.CENTER);
 		lblListadoDeDrag.setForeground(SystemColor.textHighlight);
 		lblListadoDeDrag.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblListadoDeDrag.setBounds(10, 11, 264, 14);
-		frmListarDragqueens.getContentPane().add(lblListadoDeDrag);
+		frmListarDragQueenGanadora.getContentPane().add(lblListadoDeDrag);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		panel.setBounds(10, 36, 264, 60);
-		frmListarDragqueens.getContentPane().add(panel);
+		frmListarDragQueenGanadora.getContentPane().add(panel);
 		panel.setLayout(null);
 		
-		JButton btnListarDragQueens = new JButton("Listar");
-		btnListarDragQueens.setBounds(165, 26, 89, 23);
-		panel.add(btnListarDragQueens);
+		JButton btnListarDragQueenGanadora = new JButton("Listar");
+		btnListarDragQueenGanadora.setBounds(165, 26, 89, 23);
+		panel.add(btnListarDragQueenGanadora);
 		
 		txtNroTemp = new JTextField();
 		txtNroTemp.setBounds(10, 27, 145, 20);
@@ -109,31 +109,30 @@ public class VentanaListarDragQueens
 		lblNroTemp.setBounds(10, 11, 89, 14);
 		panel.add(lblNroTemp);
 		
-		btnListarDragQueens.addActionListener(new ActionListener()
+		btnListarDragQueenGanadora.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				ListarDragQueens();
+				ListarDragQueenGanadora();
 				
 			}
 		});
 		
-		frmListarDragqueens.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmListarDragQueenGanadora.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
 	public void setVisible(boolean valor)
 	{
-		frmListarDragqueens.setVisible(valor);
+		frmListarDragQueenGanadora.setVisible(valor);
 	}
 	
-	public void ListarDragQueens()
-	{
-		List<VODragQueenVictorias> lista = new ArrayList<VODragQueenVictorias>();
-		
+	public void ListarDragQueenGanadora()
+	{	
+		VODragQueenVictorias lista = null;
 		try {
-			lista = cont.ListarDragQueens(Integer.parseInt(txtNroTemp.getText()));					
+			 lista = cont.ListarDragQueenGanadora(Integer.parseInt(txtNroTemp.getText()));					
 		} catch (NumberFormatException | RemoteException | PersistenciaException e1) {
-			JOptionPane.showMessageDialog(frmListarDragqueens, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frmListarDragQueenGanadora, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
 		// Me traigo la lista de las DragQueens, recorro y tiro cada dato a la tabla
@@ -143,13 +142,11 @@ public class VentanaListarDragQueens
 		modelo.addColumn("Victorias");
 		Object rowData[]= new Object[3];
 		
-		for(VODragQueenVictorias voDq : lista)
-		{
-			rowData[0] = voDq.getNroPart();
-			rowData[1] = voDq.getNombre();
-			rowData[2] = voDq.getCantVictorias();
+			rowData[0] = lista.getNroPart();
+			rowData[1] = lista.getNombre();
+			rowData[2] = lista.getCantVictorias();
 			modelo.addRow(rowData);
-		}		
+				
 		tblDatos.setModel(modelo);
 	}
 }

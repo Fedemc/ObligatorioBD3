@@ -2,7 +2,7 @@ package grafica.ventanas;
 
 import java.awt.EventQueue;
 import java.awt.event.*;
-
+import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -11,22 +11,27 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import grafica.controladores.ContVentanaListarTemporadas;
-import grafica.controladores.ContVentanaTempMaxPart;
+import grafica.controladores.ControladorListarTemporadas;
+import grafica.controladores.ControladorTemporadaMasParticipantes;
+import logicaPersistencia.excepciones.PersistenciaException;
 import logicaPersistencia.valueObjects.VOTempMaxPart;
 import logicaPersistencia.valueObjects.VOTemporada;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.UIManager;
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.SystemColor;
+import javax.swing.SwingConstants;
 
 
-public class VentanaTempMasPart
+public class VentanaTemporadaMasParticipantes
 {
 
 	private JFrame frmListarTemporadas;
 	private JTable tblDatos;
-	private ContVentanaTempMaxPart cont;
+	private ControladorTemporadaMasParticipantes cont;
 
 	/**
 	 * Launch the application.
@@ -39,7 +44,7 @@ public class VentanaTempMasPart
 			{
 				try
 				{
-					VentanaTempMasPart window = new VentanaTempMasPart();
+					VentanaTemporadaMasParticipantes window = new VentanaTemporadaMasParticipantes();
 					window.frmListarTemporadas.setVisible(true);
 				} catch (Exception e)
 				{
@@ -52,7 +57,7 @@ public class VentanaTempMasPart
 	/**
 	 * Create the application.
 	 */
-	public VentanaTempMasPart()
+	public VentanaTemporadaMasParticipantes()
 	{
 		initialize();
 	}
@@ -62,35 +67,30 @@ public class VentanaTempMasPart
 	 */
 	private void initialize()
 	{
-		cont = new ContVentanaTempMaxPart(this);
+		cont = new ControladorTemporadaMasParticipantes(this);
 		frmListarTemporadas = new JFrame();
 		frmListarTemporadas.setTitle("Temporada con más participantes");
-		frmListarTemporadas.setBounds(100, 100, 801, 541);
+		frmListarTemporadas.setBounds(100, 100, 350, 122);
 		frmListarTemporadas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmListarTemporadas.getContentPane().setLayout(null);
-		
-		JButton btnListarTemporadas = new JButton("Listar");
-		btnListarTemporadas.setBounds(10, 219, 79, 23);
-		frmListarTemporadas.getContentPane().add(btnListarTemporadas);
 		
 		tblDatos = new JTable();
 		tblDatos.setBorder(UIManager.getBorder("ComboBox.border"));
 		tblDatos.setEnabled(false);
 		
 		JScrollPane scrollPane = new JScrollPane(tblDatos);
-		scrollPane.setBounds(99, 0, 686, 502);
-		frmListarTemporadas.getContentPane().add(scrollPane);		
+		scrollPane.setBounds(10, 36, 314, 39);
+		frmListarTemporadas.getContentPane().add(scrollPane);				
 		
-		btnListarTemporadas.addActionListener(new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						cont.TempMaxPart();
-					}
-				}
-		);
-		
+		JLabel lblTemporadaConMs = new JLabel("Temporada con m\u00E1s participantes");
+		lblTemporadaConMs.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTemporadaConMs.setForeground(SystemColor.textHighlight);
+		lblTemporadaConMs.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblTemporadaConMs.setBounds(10, 11, 314, 14);
+		frmListarTemporadas.getContentPane().add(lblTemporadaConMs);
 		frmListarTemporadas.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		listarTemporadaMasParticipantes();
 	}
 	
 	public void setVisible(boolean valor)
@@ -98,32 +98,31 @@ public class VentanaTempMasPart
 		frmListarTemporadas.setVisible(valor);
 	}
 	
-	public void ListarTempMasParticipantes(VOTempMaxPart temp)
+	public void listarTemporadaMasParticipantes()
 	{
+		VOTempMaxPart vo = null;
+		
+		try {
+			vo = cont.TempMaxPart();
+		} catch (RemoteException | PersistenciaException e) {
+			JOptionPane.showMessageDialog(frmListarTemporadas, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
 		// Me traigo la lista de las temporadas, recorro y tiro cada dato a la tabla
 		DefaultTableModel modelo=new DefaultTableModel();
 		modelo.addColumn("Nro");
 		modelo.addColumn("Año");
 		modelo.addColumn("Capítulos");
 		modelo.addColumn("Participantes");
-		Object rowData[]= new Object[4];
-		rowData[0] = temp.getNroTemp();
-		rowData[1] = temp.getAnio();
-		rowData[2] = temp.getCantCapitulos();
-		rowData[3] = temp.getCantParticipantes();
-		modelo.addRow(rowData);	
-		tblDatos.setModel(modelo);
-	}
-	
-	public void mostrarError(String res)
-	{
-		JOptionPane.showMessageDialog(frmListarTemporadas, res, "Error", JOptionPane.ERROR_MESSAGE);
-	}
-	
-	public void mostrarResultado(String res)
-	{
+		if (vo != null) {
+			Object rowData[]= new Object[4];
+			rowData[0] = vo.getNroTemp();
+			rowData[1] = vo.getAnio();
+			rowData[2] = vo.getCantCapitulos();
+			rowData[3] = vo.getCantParticipantes();
+			modelo.addRow(rowData);	
+		}
 		
-		JOptionPane.showMessageDialog(frmListarTemporadas, res, "Resultado", JOptionPane.INFORMATION_MESSAGE);
-		frmListarTemporadas.dispose();
+		tblDatos.setModel(modelo);
 	}
 }

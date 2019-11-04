@@ -11,13 +11,20 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import grafica.ventanas.*;
-import grafica.controladores.ContPrincipal;
+import grafica.controladores.ControladorPrincipal;
+import java.awt.Font;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
+import java.awt.SystemColor;
+import javax.swing.UIManager;
 
 public class VentanaPrincipal
 {
 
 	private JFrame frmRu;
-	private ContPrincipal cont;
+	private ControladorPrincipal cont;
 	
 	/**
 	 * Launch the application.
@@ -54,18 +61,20 @@ public class VentanaPrincipal
 	private void initialize()
 	{
 		frmRu = new JFrame();
-		frmRu.setTitle("RuPaul\u2019s Drag Race Admin");
-		frmRu.setBounds(100, 100, 755, 291);
+		frmRu.setResizable(false);
+		frmRu.setTitle("RuPaul\u2019s Drag Race");
+		frmRu.setBounds(100, 100, 300, 373);
 		frmRu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmRu.getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(58, 37, 228, 115);
+		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panel.setBounds(10, 36, 263, 115);
 		frmRu.getContentPane().add(panel);
 		panel.setLayout(null);
 		
 		JButton btnNuevaTemporada = new JButton("Nueva Temporada");
-		btnNuevaTemporada.setBounds(48, 13, 121, 23);
+		btnNuevaTemporada.setBounds(10, 13, 243, 23);
 		panel.add(btnNuevaTemporada);
 		btnNuevaTemporada.addActionListener( new ActionListener() {
 			public void actionPerformed(ActionEvent e)
@@ -76,7 +85,7 @@ public class VentanaPrincipal
 		});
 		
 		JButton btnListarTemporadas = new JButton("Listar Temporadas");
-		btnListarTemporadas.setBounds(48, 47, 121, 23);
+		btnListarTemporadas.setBounds(10, 47, 243, 23);
 		panel.add(btnListarTemporadas);
 		btnListarTemporadas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
@@ -88,23 +97,24 @@ public class VentanaPrincipal
 		
 		
 		JButton btnTempMasParticipantes = new JButton("Temporada con mas participantes");
-		btnTempMasParticipantes.setBounds(10, 81, 193, 23);
+		btnTempMasParticipantes.setBounds(10, 81, 243, 23);
 		panel.add(btnTempMasParticipantes);
 		btnTempMasParticipantes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				VentanaTempMasPart ventTempMasPart = new VentanaTempMasPart();
+				VentanaTemporadaMasParticipantes ventTempMasPart = new VentanaTemporadaMasParticipantes();
 				ventTempMasPart.setVisible(true);
 			}
 		});
 		
 		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		panel_1.setLayout(null);
-		panel_1.setBounds(435, 37, 141, 170);
+		panel_1.setBounds(10, 184, 263, 145);
 		frmRu.getContentPane().add(panel_1);
 		
 		JButton btnInscribirDragQueen = new JButton("Inscribir DragQueen");
-		btnInscribirDragQueen.setBounds(10, 23, 121, 23);
+		btnInscribirDragQueen.setBounds(10, 11, 243, 23);
 		panel_1.add(btnInscribirDragQueen);
 		btnInscribirDragQueen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
@@ -114,12 +124,8 @@ public class VentanaPrincipal
 			}
 		});
 		
-		JButton btnRegistrarVictoria = new JButton("Registrar Victoria");
-		btnRegistrarVictoria.setBounds(10, 91, 121, 23);
-		panel_1.add(btnRegistrarVictoria);
-		
 		JButton btnListarDragQueens = new JButton("Listar DragQueens");
-		btnListarDragQueens.setBounds(10, 57, 121, 23);
+		btnListarDragQueens.setBounds(10, 45, 243, 23);
 		panel_1.add(btnListarDragQueens);
 		btnListarDragQueens.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
@@ -129,19 +135,45 @@ public class VentanaPrincipal
 			}
 		});
 		
-		JButton btnObtenerGanadora = new JButton("Obtener Ganadora");
-		btnObtenerGanadora.setBounds(10, 125, 121, 23);
-		panel_1.add(btnObtenerGanadora);
+		JButton btnRegistrarVictoria = new JButton("Registrar Victoria");
+		btnRegistrarVictoria.setBounds(10, 79, 243, 23);
+		panel_1.add(btnRegistrarVictoria);
+		btnRegistrarVictoria.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e)
+		{
+			VentanaRegistrarVictoria ventRegPar = new VentanaRegistrarVictoria();
+			ventRegPar.setVisible(true);
+		}		
+	});
+	
 		
-		JLabel lblOperacionesConTemporadas = new JLabel("Operaciones con Temporadas");
-		lblOperacionesConTemporadas.setBounds(98, 12, 155, 14);
+		JButton btnObtenerGanadora = new JButton("Obtener Ganadora");
+		btnObtenerGanadora.setBounds(10, 113, 243, 23);
+		panel_1.add(btnObtenerGanadora);
+		btnObtenerGanadora.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e)
+			{
+				VentanaListarDragQueenGanadora ventListarDQGanadora = new VentanaListarDragQueenGanadora();
+				ventListarDQGanadora.setVisible(true);
+			}
+		});
+
+
+		
+		JLabel lblOperacionesConTemporadas = new JLabel("Temporadas");
+		lblOperacionesConTemporadas.setForeground(SystemColor.textHighlight);
+		lblOperacionesConTemporadas.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOperacionesConTemporadas.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblOperacionesConTemporadas.setBounds(101, 11, 80, 14);
 		frmRu.getContentPane().add(lblOperacionesConTemporadas);
 		
-		JLabel lblOperacionesConDragqueens = new JLabel("Operaciones con DragQueens");
-		lblOperacionesConDragqueens.setBounds(421, 12, 155, 14);
+		JLabel lblOperacionesConDragqueens = new JLabel("DragQueens");
+		lblOperacionesConDragqueens.setForeground(SystemColor.textHighlight);
+		lblOperacionesConDragqueens.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOperacionesConDragqueens.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblOperacionesConDragqueens.setBounds(101, 162, 80, 14);
 		frmRu.getContentPane().add(lblOperacionesConDragqueens);
 		
-		cont = ContPrincipal.GetInstancia();
-		
+		cont = ControladorPrincipal.getInstancia();
 	}
 }
