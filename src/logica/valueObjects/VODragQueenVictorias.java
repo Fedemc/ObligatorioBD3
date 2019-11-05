@@ -1,4 +1,4 @@
-package logicaPersistencia.valueObjects;
+package logica.valueObjects;
 
 import java.io.Serializable;
 

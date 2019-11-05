@@ -1,6 +1,6 @@
-package logicaPersistencia;
+package logica;
 
-import logicaPersistencia.excepciones.PersistenciaException;
+import logica.excepciones.PersistenciaException;
 
 public abstract interface IPoolConexiones 
 {

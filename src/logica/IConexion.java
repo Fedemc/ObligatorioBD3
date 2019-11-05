@@ -1,4 +1,4 @@
-package logicaPersistencia;
+package logica;
 
 import java.sql.Connection;
 

@@ -1,4 +1,4 @@
-package logicaPersistencia;
+package logica;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,9 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import logicaPersistencia.Conexion;
-import logicaPersistencia.IConexion;
-import logicaPersistencia.excepciones.PersistenciaException;
+import logica.excepciones.PersistenciaException;
 
 
 public class PoolConexiones implements IPoolConexiones

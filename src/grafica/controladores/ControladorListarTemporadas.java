@@ -2,10 +2,9 @@ package grafica.controladores;
 
 import grafica.controladores.ControladorPrincipal;
 import grafica.ventanas.VentanaListarTemporadas;
-import logicaPersistencia.IFachada;
-import logicaPersistencia.excepciones.PersistenciaException;
-import logicaPersistencia.valueObjects.VOTemporada;
-
+import logica.IFachada;
+import logica.excepciones.PersistenciaException;
+import logica.valueObjects.VOTemporada;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.ArrayList;

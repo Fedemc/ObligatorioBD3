@@ -1,4 +1,4 @@
-package logicaPersistencia.accesoBD;
+package persistencia.consultas;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -8,9 +8,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import logicaPersistencia.excepciones.PersistenciaException;
-import logicaPersistencia.IConexion;
-import logicaPersistencia.valueObjects.*;
+import logica.IConexion;
+import logica.excepciones.PersistenciaException;
+import logica.valueObjects.VODragQueen;
+import logica.valueObjects.VODragQueenVictorias;
+import logica.valueObjects.VOTempMaxPart;
+import logica.valueObjects.VOTemporada;
 
 public class AccesoBD
 {

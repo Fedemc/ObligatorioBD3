@@ -1,8 +1,7 @@
 package grafica.ventanas;
 
 import grafica.controladores.ControladorRegistrarVictoria;
-import logicaPersistencia.excepciones.PersistenciaException;
-
+import logica.excepciones.PersistenciaException;
 import java.awt.event.*;
 import java.rmi.RemoteException;
 import java.awt.EventQueue;

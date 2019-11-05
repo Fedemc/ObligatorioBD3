@@ -13,8 +13,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import grafica.controladores.ControladorListarTemporadas;
-import logicaPersistencia.excepciones.PersistenciaException;
-import logicaPersistencia.valueObjects.VOTemporada;
+import logica.excepciones.PersistenciaException;
+import logica.valueObjects.VOTemporada;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;

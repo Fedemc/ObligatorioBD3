@@ -2,9 +2,9 @@ package grafica.controladores;
 
 import grafica.controladores.ControladorPrincipal;
 import grafica.ventanas.VentanaListarDragQueens;
-import logicaPersistencia.excepciones.PersistenciaException;
-import logicaPersistencia.IFachada;
-import logicaPersistencia.valueObjects.VODragQueenVictorias;
+import logica.IFachada;
+import logica.excepciones.PersistenciaException;
+import logica.valueObjects.VODragQueenVictorias;
 import java.rmi.RemoteException;
 import java.util.List;
 

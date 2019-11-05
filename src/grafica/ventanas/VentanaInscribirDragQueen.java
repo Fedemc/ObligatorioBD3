@@ -1,8 +1,7 @@
 package grafica.ventanas;
 
 import grafica.controladores.ControladorInscribirDragQueen;
-import logicaPersistencia.excepciones.PersistenciaException;
-
+import logica.excepciones.PersistenciaException;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;

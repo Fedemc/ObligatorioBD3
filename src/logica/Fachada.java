@@ -1,15 +1,20 @@
-package logicaPersistencia;
+package logica;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import logica.excepciones.PersistenciaException;
+import logica.valueObjects.VODragQueen;
+import logica.valueObjects.VODragQueenRegistrarVictoria;
+import logica.valueObjects.VODragQueenVictorias;
+import logica.valueObjects.VOTempMaxPart;
+import logica.valueObjects.VOTemporada;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
-import logicaPersistencia.accesoBD.AccesoBD;
-import logicaPersistencia.excepciones.*;
-import logicaPersistencia.IPoolConexiones;
-import logicaPersistencia.valueObjects.*;
+import persistencia.consultas.AccesoBD;
 
 public class Fachada extends UnicastRemoteObject implements IFachada
 {

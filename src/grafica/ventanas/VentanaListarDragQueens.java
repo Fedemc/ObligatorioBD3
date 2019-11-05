@@ -1,8 +1,8 @@
 package grafica.ventanas;
 
 import grafica.controladores.ControladorListarDragQueens;
-import logicaPersistencia.excepciones.PersistenciaException;
-import logicaPersistencia.valueObjects.VODragQueenVictorias;
+import logica.excepciones.PersistenciaException;
+import logica.valueObjects.VODragQueenVictorias;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;

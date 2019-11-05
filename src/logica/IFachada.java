@@ -1,14 +1,15 @@
-package logicaPersistencia;
+package logica;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
-import logicaPersistencia.valueObjects.VODragQueenRegistrarVictoria;
-import logicaPersistencia.valueObjects.VODragQueen;
-import logicaPersistencia.valueObjects.VODragQueenVictorias;
-import logicaPersistencia.valueObjects.VOTempMaxPart;
-import logicaPersistencia.valueObjects.VOTemporada;
-import logicaPersistencia.excepciones.*;
+
+import logica.excepciones.PersistenciaException;
+import logica.valueObjects.VODragQueen;
+import logica.valueObjects.VODragQueenRegistrarVictoria;
+import logica.valueObjects.VODragQueenVictorias;
+import logica.valueObjects.VOTempMaxPart;
+import logica.valueObjects.VOTemporada;
 
 
 public interface IFachada extends Remote

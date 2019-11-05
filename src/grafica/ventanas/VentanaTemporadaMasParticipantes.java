@@ -1,24 +1,16 @@
 package grafica.ventanas;
 
 import java.awt.EventQueue;
-import java.awt.event.*;
 import java.rmi.RemoteException;
-import java.util.List;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import grafica.controladores.ControladorListarTemporadas;
 import grafica.controladores.ControladorTemporadaMasParticipantes;
-import logicaPersistencia.excepciones.PersistenciaException;
-import logicaPersistencia.valueObjects.VOTempMaxPart;
-import logicaPersistencia.valueObjects.VOTemporada;
-import javax.swing.JPanel;
+import logica.excepciones.PersistenciaException;
+import logica.valueObjects.VOTempMaxPart;
 import javax.swing.JScrollPane;
-import javax.swing.border.BevelBorder;
 import javax.swing.UIManager;
 import javax.swing.JLabel;
 import java.awt.Font;
