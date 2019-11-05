@@ -2,6 +2,7 @@ package logica;
 
 import java.util.List;
 
+import logica.excepciones.PersistenciaException;
 import logica.valueObjects.VODragQueenVictorias;
 import persistencia.daos.DAODragQueens;
 
@@ -10,7 +11,7 @@ public class Temporada
 	private int nroTemp;
 	private int anio;
 	private int cantCapitulos;
-	private List<DAODragQueens> secuencia;
+	private DAODragQueens secuencia;
 	
 	
 	public Temporada(int nroT, int anio, int cantCaps)
@@ -36,9 +37,12 @@ public class Temporada
 		return cantCapitulos;
 	}
 	
-	public int getCantParticipantes() 
+	public int getCantParticipantes(IConexion icon) throws PersistenciaException 
 	{
-		return secuencia.size();
+		int cant = 0;
+		secuencia.setNroTemp(this.getNroTemp());
+		cant = secuencia.largo(icon);
+		return cant;
 	}
 	
 	// Recorre la secuencia verificando si hay una DQ con ese nroPart

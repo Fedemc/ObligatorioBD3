@@ -46,11 +46,23 @@ public class DAODragQueens
 		return vacio;
 	}
 	
-	public int largo()
+	public int largo(IConexion icon) throws PersistenciaException
 	{
-		int retorno=0;
+		int largo = 0;
+		Connection con = icon.getConnection();
+		try
+		{
+			PreparedStatement pstmt = con.prepareStatement(Consultas.cantidadParticipantesDeTemporada());
+			pstmt.setInt(1, nroTemp);
+			ResultSet rs = pstmt.executeQuery();
+			largo = rs.getInt("cantParticipantes");
+		}
+		catch(SQLException e)
+		{
+			throw new PersistenciaException("ERROR SQL: " + e.toString());
+		}		
 		
-		return retorno;
+		return largo;
 	}
 	
 	public DragQueen k_esima(int nroP)
@@ -77,6 +89,11 @@ public class DAODragQueens
 		VODragQueenVictorias ganadora=null;
 		
 		return ganadora;
+	}
+	
+	public void setNroTemp(int nroT)
+	{
+		nroTemp = nroT;
 	}
 
 }
