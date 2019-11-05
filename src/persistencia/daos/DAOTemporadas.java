@@ -47,7 +47,20 @@ public class DAOTemporadas
 	
 	public void insert(Temporada temp, IConexion icon) throws PersistenciaException
 	{
-		
+		Connection con = icon.getConnection();
+		try
+		{
+			String query = Consultas.nuevaTemporada();
+			PreparedStatement pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, temp.getNroTemp());
+			pstmt.setInt(2, temp.getAnio());
+			pstmt.setInt(3, temp.getCantCapitulos());
+			pstmt.executeUpdate();
+		}
+		catch(SQLException e)
+		{
+			throw new PersistenciaException("ERROR SQL: " + e.toString());
+		}
 	}
 	
 	public Temporada find(int nroTemp, IConexion icon) throws PersistenciaException
