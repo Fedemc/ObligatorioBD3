@@ -42,7 +42,7 @@ public class Consultas
 	 * devuelto para encontrar la que tenga mas victorias.*/
 	public static String cantidadDeVictoriasDeDragQueensDeTemporada()
 	{
-		return "SELECT nroPart, cantVictorias FROM DragQueens WHERE nroTemp = ? ORDER BY nroPart";
+		return "SELECT * FROM DragQueens WHERE nroTemp = ? ORDER BY nroPart";
 	}
 	
 	public static String dragQueenPorNumeroDeParticipante()
@@ -53,5 +53,10 @@ public class Consultas
 	public static String temporadaConMasParticipantes()
 	{
 		return "SELECT t.nroTemp, MAX(t.anio) AS nroAnio, MAX(t.cantCapitulos) AS cantCaps, COUNT(dq.nombre) AS cantParticipantes FROM temporadas t, dragqueens dq WHERE t.nroTemp = dq.nroTemp GROUP BY t.nroTemp ORDER BY COUNT(dq.nombre) DESC LIMIT 1";
+	}
+	
+	public static String dragQueenPorNumeroDeParticipanteYNumeroTemporada()
+	{
+		return "SELECT * FROM dragqueens WHERE nroPart = ? AND nroTemp = ?";
 	}
 }

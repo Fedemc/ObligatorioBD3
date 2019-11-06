@@ -19,6 +19,7 @@ public class Temporada
 		nroTemp = nroT;
 		this.anio = anio;
 		cantCapitulos = cantCaps;
+		secuencia = new DAODragQueens(nroT);
 	}
 
 
@@ -37,58 +38,48 @@ public class Temporada
 		return cantCapitulos;
 	}
 	
-	public int getCantParticipantes(IConexion icon) throws PersistenciaException 
+	public int getCantParticipantes(IConexion icon) throws PersistenciaException
 	{
-		int cant = 0;
-		secuencia.setNroTemp(this.getNroTemp());
-		cant = secuencia.largo(icon);
-		return cant;
+		return secuencia.largo(icon);
 	}
 	
-	// Recorre la secuencia verificando si hay una DQ con ese nroPart
-	public boolean tieneDragQueen(int nroPart)
+	// Llama a secuencia.k_esima
+	public boolean tieneDragQueen(int nroPart, IConexion icon) throws PersistenciaException
 	{
-		boolean tiene=false;
-		
-		
-		
-		return tiene;
+		DragQueen dq = secuencia.k_esima(nroPart, icon);
+		return !dq.equals(null);
 	}
 	
-	// Inserta una nueva DQ en la secuencia
-	public void inscribirDragQueen(DragQueen dq)
+	// Llama a secuencia.insback
+	public void inscribirDragQueen(DragQueen dq, IConexion icon) throws PersistenciaException
 	{
-		
+		secuencia.insBack(dq, icon);
 	}
 	
-	// Recorre la secuencia y devuelve la DQ con el nroPart
-	public DragQueen obtenerDragQueen(int nroPart)
+	// Llama a secuencia.k_esimo
+	public DragQueen obtenerDragQueen(int nroPart, IConexion icon) throws PersistenciaException
 	{
-		DragQueen resu = null;
-		
-		
+		DragQueen resu = secuencia.k_esima(nroPart, icon);
 		return resu;
 	}
 	
-	// Recorre la secuencia, extrayendo los datos de cada participante a un VODQ y lo inserta en la lista a devolver
-	public List<VODragQueenVictorias> listarDragQueens()
+	// Llama a secuencia.listarDragQueens
+	public List<VODragQueenVictorias> listarDragQueens(IConexion icon) throws PersistenciaException
 	{
-		List<VODragQueenVictorias> resu = null;
-		
+		List<VODragQueenVictorias> resu = secuencia.listarDragQueens(icon);
 		return resu;
 	}
 	
-	// Recorre la secuencia buscando el nroPart, y le asigna una victoria
-	public void registrarVictoria(int nroPart)
+	// Llama a secuencia.registrarVictoria
+	public void registrarVictoria(int nroPart, IConexion icon) throws PersistenciaException
 	{
-		
+		secuencia.registrarVictoria(nroPart, icon);
 	}
 	
-	// Recorre la secuencia y extrae la que tiene mas victorias
-	public VODragQueenVictorias obtenerGanadora()
+	// Llama a secuencia.obtenerGanadora
+	public VODragQueenVictorias obtenerGanadora(IConexion icon) throws PersistenciaException
 	{
-		VODragQueenVictorias resu = null;
-		
+		VODragQueenVictorias resu = secuencia.obtenerGanadora(icon);
 		return resu;
 	}
 }
