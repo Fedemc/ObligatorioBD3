@@ -74,7 +74,7 @@ public class DAOTemporadas
 			ResultSet rs = pstmt.executeQuery();
 			if(rs.next())
 			{
-				resu =  new Temporada(rs.getInt("nroTemp"), rs.getInt("anio"), rs.getInt("cantCaps"));
+				resu =  new Temporada(rs.getInt("nroTemp"), rs.getInt("anio"), rs.getInt("cantCapitulos"));
 			}
 		}
 		catch(SQLException e)
@@ -137,7 +137,7 @@ public class DAOTemporadas
 			ResultSet rs = stmt.executeQuery(Consultas.temporadaConMasParticipantes());
 			if(rs.next())
 			{
-				resu = new VOTempMaxPart(rs.getInt("nroTemp"), rs.getInt("anio"), rs.getInt("cantCapitulos"), rs.getInt("cantParticipantes"));
+				resu = new VOTempMaxPart(rs.getInt("nroTemp"), rs.getInt("nroAnio"), rs.getInt("cantCaps"), rs.getInt("cantParticipantes"));
 			}			
 		}
 		catch(SQLException e)

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import logica.DragQueen;
@@ -67,7 +68,10 @@ public class DAODragQueens
 			PreparedStatement pstmt = con.prepareStatement(Consultas.cantidadParticipantesDeTemporada());
 			pstmt.setInt(1, nroTemp);
 			ResultSet rs = pstmt.executeQuery();
-			largo = rs.getInt("cantParticipantes");
+			if(rs.next())
+			{
+				largo = rs.getInt("cantParticipantes");
+			}			
 		}
 		catch(SQLException e)
 		{
@@ -102,7 +106,7 @@ public class DAODragQueens
 	
 	public List<VODragQueenVictorias> listarDragQueens(IConexion icon) throws PersistenciaException
 	{
-		List<VODragQueenVictorias> resu = null;
+		List<VODragQueenVictorias> resu = new ArrayList<VODragQueenVictorias>();
 		Connection con = icon.getConnection();
 		try
 		{

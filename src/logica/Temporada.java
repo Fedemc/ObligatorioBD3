@@ -38,6 +38,11 @@ public class Temporada
 		return cantCapitulos;
 	}
 	
+	public DAODragQueens getSecuencia()
+	{
+		return secuencia;
+	}
+	
 	public int getCantParticipantes(IConexion icon) throws PersistenciaException
 	{
 		return secuencia.largo(icon);
@@ -47,7 +52,7 @@ public class Temporada
 	public boolean tieneDragQueen(int nroPart, IConexion icon) throws PersistenciaException
 	{
 		DragQueen dq = secuencia.k_esima(nroPart, icon);
-		return !dq.equals(null);
+		return dq != null;
 	}
 	
 	// Llama a secuencia.insback

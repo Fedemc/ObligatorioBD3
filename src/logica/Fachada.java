@@ -10,17 +10,18 @@ import logica.valueObjects.VODragQueenVictorias;
 import logica.valueObjects.VOTempMaxPart;
 import logica.valueObjects.VOTemporada;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 import persistencia.consultas.AccesoBD;
+import persistencia.daos.DAOTemporadas;
 
 public class Fachada extends UnicastRemoteObject implements IFachada
 {
 	private static Fachada fachada;
 	
 	private AccesoBD abd;
+	private DAOTemporadas diccio;
 	
 	private IPoolConexiones pool;
 	
@@ -30,7 +31,8 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	 */
 	private Fachada() throws RemoteException
 	{
-		abd = new AccesoBD();
+		abd = new AccesoBD();	// TODO borrar esto cuando el diccio esté funcionando
+		diccio = new DAOTemporadas();
 		try {
 			pool = new PoolConexiones();
 		} catch(PersistenciaException e) {
@@ -65,66 +67,76 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	{
 		int nroTemp = voT.getNroTemp();
 		boolean existe=false;
-		IConexion icon = pool.ObtenerConexiones(true);
+		IConexion icon = null;
 		try
 		{
-			VOTemporada voExiste = abd.TempConNroTemp(icon, nroTemp);
-			if(voExiste != null)
-			{
-				existe=true;
-			}
+			icon = pool.ObtenerConexiones(false);
 		}
-		catch(SQLException sqlEx)
+		catch(PersistenciaException pEx)
 		{
-			pool.LiberarConexion(icon, false);
-			String error = "Error de SQL: " + sqlEx.getMessage();
+			String error = "Error al obtener conexion a persistencia: " + pEx.getMessage();
 			throw new PersistenciaException(error);
 		}
-		if(!existe)
+		
+		try
 		{
-			int anio = voT.getAnio();
-			int cantCaps = voT.getCantCapitulos();
-			
-			try
+			existe = diccio.member(nroTemp, icon);
+			if(!existe)
 			{
-				abd.NuevaTemporada(icon, nroTemp, anio, cantCaps);
+				int anio = voT.getAnio();
+				int cantCaps = voT.getCantCapitulos();
+				Temporada temp = new Temporada(nroTemp, anio, cantCaps);
+				diccio.insert(temp, icon);
 				pool.LiberarConexion(icon, true);
 			}
-			catch(SQLException sqlEx)
+			else
 			{
-				pool.LiberarConexion(icon, false);
-				String error = "Error de SQL: " + sqlEx.getMessage();
-				throw new PersistenciaException(error);
+				pool.LiberarConexion(icon, true);
+				throw new PersistenciaException("Ya existe una temporada registrada con ese nro de temporada.");
 			}
 		}
-		else
+		catch(PersistenciaException e)
 		{
 			pool.LiberarConexion(icon, false);
-			throw new PersistenciaException("ERROR: Ya existe una temporada con ese nro de temporada.");
+			throw e;
 		}
 	}
 	
 	/* Inscribir una nueva DragQueen */
 	public void inscribirDragQueen(VODragQueen voD) throws RemoteException, PersistenciaException
 	{
-		IConexion icon = pool.ObtenerConexiones(true);
+		IConexion icon = null;
+		try
+		{
+			icon = pool.ObtenerConexiones(false);
+		}
+		catch(PersistenciaException pEx)
+		{
+			String error = "Error al obtener conexion a persistencia: " + pEx.getMessage();
+			throw new PersistenciaException(error);
+		}
+		
 		String nombre = voD.getNombre();
 		int nroTemp = voD.getNroTemp();
 		try
 		{
-			abd.InscribirDragQueen(icon, nombre, nroTemp);
-			pool.LiberarConexion(icon, true);
+			if(diccio.member(nroTemp, icon))
+			{
+				Temporada temp = diccio.find(nroTemp, icon);
+				DragQueen dq = new DragQueen(temp.getCantParticipantes(icon)+1, voD.getNombre(), 0);
+				temp.inscribirDragQueen(dq, icon);
+				pool.LiberarConexion(icon, true);
+			}
+			else
+			{
+				pool.LiberarConexion(icon, true);
+				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
+			}
 		}
-		catch(SQLException sqlEx)
+		catch(PersistenciaException e)
 		{
 			pool.LiberarConexion(icon, false);
-			String error = "Error de SQL: " + sqlEx.getMessage();
-			throw new PersistenciaException(error);
-		}
-		catch(PersistenciaException pEx)
-		{
-			pool.LiberarConexion(icon, false);
-			throw new PersistenciaException(pEx.getMessage());
+			throw e;
 		}
 	}
 	
@@ -139,21 +151,19 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		}
 		catch(PersistenciaException pEx)
 		{
-			String error = "Error de SQL: " + pEx.getMessage();
+			String error = "Error al obtener conexion a persistencia: " + pEx.getMessage();
 			throw new PersistenciaException(error);
 		}
-		
 		
 		try
 		{
-			resu = abd.ListarTemporadas(icon);
+			resu = diccio.listarTemporadas(icon);
 			pool.LiberarConexion(icon, true);
 		}
-		catch(SQLException sqlEx)
+		catch(PersistenciaException e)
 		{
 			pool.LiberarConexion(icon, false);
-			String error = "Error de SQL: " + sqlEx.getMessage();
-			throw new PersistenciaException(error);
+			throw e;
 		}
 		
 		return resu;
@@ -167,19 +177,31 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		try
 		{
 			icon = pool.ObtenerConexiones(false);
-			resu = abd.ListarDragQueens(icon, nroTemp);
-			pool.LiberarConexion(icon, true);
-		}
-		catch(SQLException sqlEx)
-		{
-			pool.LiberarConexion(icon, false);
-			String error = "Error de SQL: " + sqlEx.getMessage();
-			throw new PersistenciaException(error);
 		}
 		catch(PersistenciaException pEx)
 		{
+			String error = "Error al obtener conexion a persistencia: " + pEx.getMessage();
+			throw new PersistenciaException(error);
+		}
+		
+		try
+		{
+			if(diccio.member(nroTemp, icon))
+			{
+				Temporada temp = diccio.find(nroTemp, icon);
+				resu = temp.listarDragQueens(icon);
+				pool.LiberarConexion(icon, true);
+			}
+			else
+			{
+				pool.LiberarConexion(icon, true);
+				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
+			}			
+		}
+		catch(PersistenciaException e)
+		{
 			pool.LiberarConexion(icon, false);
-			throw new PersistenciaException(pEx.getMessage());
+			throw e;
 		}
 		
 		return resu;
@@ -190,19 +212,31 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	{
 		VOTempMaxPart resu = null;
 		IConexion icon = null;
-		
-		try {
+		try
+		{
 			icon = pool.ObtenerConexiones(false);
-			List<VOTemporada> lista = abd.ListarTemporadas(icon);
-			if (lista.size() > 0)
-				resu = abd.TempConMasParticipantes(icon);
-			
-			pool.LiberarConexion(icon, true);
-		} catch (SQLException e) {
-			pool.LiberarConexion(icon, false);
-			String error = "Error de SQL: " + e.getMessage();
+		}
+		catch(PersistenciaException pEx)
+		{
+			String error = "Error al obtener conexion a persistencia: " + pEx.getMessage();
 			throw new PersistenciaException(error);
-		} catch (PersistenciaException e) {
+		}
+		
+		try 
+		{
+			if(!diccio.esVacio(icon))
+			{
+				resu = diccio.tempMasParticipantes(icon);
+				pool.LiberarConexion(icon, true);
+			}
+			else
+			{
+				pool.LiberarConexion(icon, true);
+				throw new PersistenciaException("No hay temporadas registradas.");
+			}
+		} 
+		catch (PersistenciaException e) 
+		{
 			pool.LiberarConexion(icon, false);
 			throw e;
 		}
@@ -211,64 +245,46 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	}
 	
 	public void registrarVictoria(VODragQueenRegistrarVictoria voRV) throws RemoteException, PersistenciaException
-	{
-		/*
-		boolean errorVOT=false, errorVODQ=false;
-		
+	{		
+		IConexion icon = null;
 		try
 		{
-			IConexion icon = pool.ObtenerConexiones(false);
-			VOTemporada voT = abd.TempConNroTemp(icon, nroTemp);
-			if(voT.equals(null))
-			{
-				errorVOT = true;
-			}
-			VODragQueen voDQ = abd.DragQueenConNroPart(icon, nroPart);
-			if(voDQ.equals(null))
-			{
-				errorVODQ = true;
-			}
-			
-			if(errorVOT)
-			{
-				String msj = "ERROR: No existe una Temporada con el nroTemp(" + nroTemp + ") en el sistema";
-				throw new PersistenciaException(msj);
-			}
-			
-			if(errorVOT)
-			{
-				String msj = "ERROR: No existe una Temporada con el nroTemp(" + nroTemp + ") en el sistema";
-				throw new PersistenciaException(msj);
-			}
-			
-			abd.RegistrarVictoria(icon, nroTemp, nroPart);
+			icon = pool.ObtenerConexiones(false);
 		}
-		catch(SQLException sqlEx)
+		catch(PersistenciaException pEx)
 		{
-			String msj = "Error de SQL: " + sqlEx.getMessage();
-			throw new PersistenciaException(msj);
+			String error = "Error al obtener conexion a persistencia: " + pEx.getMessage();
+			throw new PersistenciaException(error);
 		}
-		*/
 		
-		IConexion icon = pool.ObtenerConexiones(true);
 		int nroParticipante = voRV.getNroPart();
 		int nroTemporada= voRV.getNroTemp();
 		try
 		{
-			 
-			abd.RegistrarVictoria(icon, nroParticipante, nroTemporada);
-			pool.LiberarConexion(icon, true);
+			if(diccio.member(nroTemporada, icon))
+			{
+				Temporada temp = diccio.find(nroTemporada, icon);
+				if(temp.tieneDragQueen(nroParticipante, icon))
+				{
+					temp.registrarVictoria(nroParticipante, icon);
+					pool.LiberarConexion(icon, true);
+				}
+				else
+				{
+					pool.LiberarConexion(icon, true);
+					throw new PersistenciaException("No existe una DragQueen registrada con ese nro de participante.");
+				}
+			}
+			else
+			{
+				pool.LiberarConexion(icon, true);
+				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
+			}
 		}
-		catch(SQLException sqlEx)
+		catch(PersistenciaException e)
 		{
 			pool.LiberarConexion(icon, false);
-			String error = "Error de SQL: " + sqlEx.getMessage();
-			throw new PersistenciaException(error);
-		}
-		catch(PersistenciaException pEx)
-		{
-			pool.LiberarConexion(icon, false);
-			throw new PersistenciaException(pEx.getMessage());
+			throw e;
 		}
 	}
 	
@@ -276,41 +292,42 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	{
 		VODragQueenVictorias resu = new VODragQueenVictorias("",1,1,1);
 		boolean errorVOT = false, errorNoHayDQs = false;
+		IConexion icon = null;
 		try
 		{
-			IConexion icon = pool.ObtenerConexiones(false);
-			VOTemporada voT = abd.TempConNroTemp(icon, nroTemp);
-			if(voT.equals(null))
-			{
-				errorVOT = true;
-			}
-			
-			int cantParticipantes = 0;
-			cantParticipantes = abd.CantParticipantesTemp(icon, nroTemp);
-			if(cantParticipantes == 0)
-			{
-				errorNoHayDQs = true;
-			}
-			
-			if(errorVOT)
-			{
-				String msj = "ERROR: No existe una Temporada con el nroTemp(" + nroTemp + ") en el sistema.";
-				throw new PersistenciaException(msj);
-			}
-			
-			if(errorVOT)
-			{
-				String msj = "ERROR: La Temporada con el nroTemp(" + nroTemp + ") no tiene participantes registrados.";
-				throw new PersistenciaException(msj);
-			}
-			
-			resu = abd.NroPartDragQueenConMasVictorias(icon, nroTemp);
-			
+			icon = pool.ObtenerConexiones(false);
 		}
-		catch(SQLException sqlEx)
+		catch(PersistenciaException pEx)
 		{
-			String msj = "Error de SQL: " + sqlEx.getMessage();
-			throw new PersistenciaException(msj);
+			String error = "Error al obtener conexion a persistencia: " + pEx.getMessage();
+			throw new PersistenciaException(error);
+		}
+		try
+		{
+			if(diccio.member(nroTemp, icon))
+			{
+				Temporada temp = diccio.find(nroTemp, icon);
+				if(!temp.getSecuencia().esVacia(icon, nroTemp))
+				{
+					resu = temp.obtenerGanadora(icon);
+					pool.LiberarConexion(icon, true);
+				}
+				else
+				{
+					pool.LiberarConexion(icon, true);
+					throw new PersistenciaException("La temporada no tiene participantes registrados.");
+				}
+			}
+			else
+			{
+				pool.LiberarConexion(icon, true);
+				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
+			}						
+		}
+		catch(PersistenciaException e)
+		{
+			pool.LiberarConexion(icon, false);
+			throw e;
 		}
 		
 		return resu;
