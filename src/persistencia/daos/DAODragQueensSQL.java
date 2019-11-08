@@ -14,11 +14,11 @@ import logica.valueObjects.VODragQueen;
 import logica.valueObjects.VODragQueenVictorias;
 import persistencia.consultas.Consultas;
 
-public class DAODragQueens
+public class DAODragQueensSQL implements IDAODragQueens
 {
 	private int nroTemp;
 	
-	public DAODragQueens(int nroT)
+	public DAODragQueensSQL(int nroT)
 	{
 		nroTemp = nroT;
 	}

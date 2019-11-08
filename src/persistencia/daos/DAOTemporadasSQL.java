@@ -15,10 +15,10 @@ import logica.valueObjects.VOTempMaxPart;
 import logica.valueObjects.VOTemporada;
 import persistencia.consultas.Consultas;
 
-public class DAOTemporadas
+public class DAOTemporadasSQL implements IDAOTemporadas
 {
 	
-	public DAOTemporadas()
+	public DAOTemporadasSQL()
 	{
 		
 	}

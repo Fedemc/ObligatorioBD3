@@ -2,6 +2,7 @@ package logica;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import logica.excepciones.PersistenciaException;
 import logica.valueObjects.VODragQueen;
@@ -12,16 +13,17 @@ import logica.valueObjects.VOTemporada;
 
 import java.sql.SQLException;
 import java.rmi.server.UnicastRemoteObject;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
-import persistencia.consultas.AccesoBD;
-import persistencia.daos.DAOTemporadas;
+import persistencia.daos.DAOTemporadasSQL;
+import persistencia.daos.IDAOTemporadas;
 
 public class Fachada extends UnicastRemoteObject implements IFachada
 {
 	private static Fachada fachada;
 	
-	private AccesoBD abd;
-	private DAOTemporadas diccio;
+	private IDAOTemporadas diccio;
 	
 	private IPoolConexiones pool;
 	
@@ -31,14 +33,19 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	 */
 	private Fachada() throws RemoteException
 	{
-		abd = new AccesoBD();	// TODO borrar esto cuando el diccio esté funcionando
-		diccio = new DAOTemporadas();
+		Properties prop = new Properties();
+		FabricaAbstracta fabrica = null;
+		
 		try {
-			pool = new PoolConexiones();
-		} catch(PersistenciaException e) {
+			prop.load(new FileInputStream("config/config.properties"));
+			fabrica = (FabricaAbstracta) Class.forName(prop.getProperty("fabrica")).newInstance();
+			pool = fabrica.crearIPoolConexiones();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException 
+				| IOException | PersistenciaException e) {
 			e.printStackTrace();
 		}
 		
+		diccio = fabrica.crearIDAOTemporadas();
 	}
 	
 	/**
@@ -70,7 +77,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		IConexion icon = null;
 		try
 		{
-			icon = pool.ObtenerConexiones(false);
+			icon = pool.obtenerConexiones(false);
 		}
 		catch(PersistenciaException pEx)
 		{
@@ -87,17 +94,17 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 				int cantCaps = voT.getCantCapitulos();
 				Temporada temp = new Temporada(nroTemp, anio, cantCaps);
 				diccio.insert(temp, icon);
-				pool.LiberarConexion(icon, true);
+				pool.liberarConexion(icon, true);
 			}
 			else
 			{
-				pool.LiberarConexion(icon, true);
+				pool.liberarConexion(icon, true);
 				throw new PersistenciaException("Ya existe una temporada registrada con ese nro de temporada.");
 			}
 		}
 		catch(PersistenciaException e)
 		{
-			pool.LiberarConexion(icon, false);
+			pool.liberarConexion(icon, false);
 			throw e;
 		}
 	}
@@ -108,7 +115,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		IConexion icon = null;
 		try
 		{
-			icon = pool.ObtenerConexiones(false);
+			icon = pool.obtenerConexiones(false);
 		}
 		catch(PersistenciaException pEx)
 		{
@@ -125,17 +132,17 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 				Temporada temp = diccio.find(nroTemp, icon);
 				DragQueen dq = new DragQueen(temp.getCantParticipantes(icon)+1, voD.getNombre(), 0);
 				temp.inscribirDragQueen(dq, icon);
-				pool.LiberarConexion(icon, true);
+				pool.liberarConexion(icon, true);
 			}
 			else
 			{
-				pool.LiberarConexion(icon, true);
+				pool.liberarConexion(icon, true);
 				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
 			}
 		}
 		catch(PersistenciaException e)
 		{
-			pool.LiberarConexion(icon, false);
+			pool.liberarConexion(icon, false);
 			throw e;
 		}
 	}
@@ -147,7 +154,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		IConexion icon=null;
 		try
 		{
-			icon = pool.ObtenerConexiones(false);
+			icon = pool.obtenerConexiones(false);
 		}
 		catch(PersistenciaException pEx)
 		{
@@ -158,11 +165,11 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		try
 		{
 			resu = diccio.listarTemporadas(icon);
-			pool.LiberarConexion(icon, true);
+			pool.liberarConexion(icon, true);
 		}
 		catch(PersistenciaException e)
 		{
-			pool.LiberarConexion(icon, false);
+			pool.liberarConexion(icon, false);
 			throw e;
 		}
 		
@@ -176,7 +183,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		IConexion icon = null;
 		try
 		{
-			icon = pool.ObtenerConexiones(false);
+			icon = pool.obtenerConexiones(false);
 		}
 		catch(PersistenciaException pEx)
 		{
@@ -190,17 +197,17 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 			{
 				Temporada temp = diccio.find(nroTemp, icon);
 				resu = temp.listarDragQueens(icon);
-				pool.LiberarConexion(icon, true);
+				pool.liberarConexion(icon, true);
 			}
 			else
 			{
-				pool.LiberarConexion(icon, true);
+				pool.liberarConexion(icon, true);
 				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
 			}			
 		}
 		catch(PersistenciaException e)
 		{
-			pool.LiberarConexion(icon, false);
+			pool.liberarConexion(icon, false);
 			throw e;
 		}
 		
@@ -214,7 +221,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		IConexion icon = null;
 		try
 		{
-			icon = pool.ObtenerConexiones(false);
+			icon = pool.obtenerConexiones(false);
 		}
 		catch(PersistenciaException pEx)
 		{
@@ -227,17 +234,17 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 			if(!diccio.esVacio(icon))
 			{
 				resu = diccio.tempMasParticipantes(icon);
-				pool.LiberarConexion(icon, true);
+				pool.liberarConexion(icon, true);
 			}
 			else
 			{
-				pool.LiberarConexion(icon, true);
+				pool.liberarConexion(icon, true);
 				throw new PersistenciaException("No hay temporadas registradas.");
 			}
 		} 
 		catch (PersistenciaException e) 
 		{
-			pool.LiberarConexion(icon, false);
+			pool.liberarConexion(icon, false);
 			throw e;
 		}
 		
@@ -249,7 +256,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		IConexion icon = null;
 		try
 		{
-			icon = pool.ObtenerConexiones(false);
+			icon = pool.obtenerConexiones(false);
 		}
 		catch(PersistenciaException pEx)
 		{
@@ -267,23 +274,23 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 				if(temp.tieneDragQueen(nroParticipante, icon))
 				{
 					temp.registrarVictoria(nroParticipante, icon);
-					pool.LiberarConexion(icon, true);
+					pool.liberarConexion(icon, true);
 				}
 				else
 				{
-					pool.LiberarConexion(icon, true);
+					pool.liberarConexion(icon, true);
 					throw new PersistenciaException("No existe una DragQueen registrada con ese nro de participante.");
 				}
 			}
 			else
 			{
-				pool.LiberarConexion(icon, true);
+				pool.liberarConexion(icon, true);
 				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
 			}
 		}
 		catch(PersistenciaException e)
 		{
-			pool.LiberarConexion(icon, false);
+			pool.liberarConexion(icon, false);
 			throw e;
 		}
 	}
@@ -295,7 +302,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		IConexion icon = null;
 		try
 		{
-			icon = pool.ObtenerConexiones(false);
+			icon = pool.obtenerConexiones(false);
 		}
 		catch(PersistenciaException pEx)
 		{
@@ -310,23 +317,23 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 				if(!temp.getSecuencia().esVacia(icon, nroTemp))
 				{
 					resu = temp.obtenerGanadora(icon);
-					pool.LiberarConexion(icon, true);
+					pool.liberarConexion(icon, true);
 				}
 				else
 				{
-					pool.LiberarConexion(icon, true);
+					pool.liberarConexion(icon, true);
 					throw new PersistenciaException("La temporada no tiene participantes registrados.");
 				}
 			}
 			else
 			{
-				pool.LiberarConexion(icon, true);
+				pool.liberarConexion(icon, true);
 				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
 			}						
 		}
 		catch(PersistenciaException e)
 		{
-			pool.LiberarConexion(icon, false);
+			pool.liberarConexion(icon, false);
 			throw e;
 		}
 		

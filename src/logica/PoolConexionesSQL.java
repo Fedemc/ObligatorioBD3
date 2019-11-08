@@ -11,7 +11,7 @@ import java.util.Properties;
 import logica.excepciones.PersistenciaException;
 
 
-public class PoolConexiones implements IPoolConexiones
+public class PoolConexionesSQL implements IPoolConexiones
 {
 	private String driver;
 	private String url;
@@ -23,7 +23,7 @@ public class PoolConexiones implements IPoolConexiones
 	private int creadas;
 	private int tope;
 	
-	public PoolConexiones() throws PersistenciaException
+	public PoolConexionesSQL() throws PersistenciaException
 	{
 		
 		
@@ -66,7 +66,7 @@ public class PoolConexiones implements IPoolConexiones
 	}
 	
 	
-	public synchronized IConexion ObtenerConexiones(boolean modifica) throws PersistenciaException
+	public synchronized IConexion obtenerConexiones(boolean modifica) throws PersistenciaException
 	{
 		IConexion conexion=null;
 		boolean tengo = false;
@@ -123,7 +123,7 @@ public class PoolConexiones implements IPoolConexiones
 		return conexion;
 	}
 	
-	public synchronized void LiberarConexion(IConexion conexion, boolean ok) throws PersistenciaException
+	public synchronized void liberarConexion(IConexion conexion, boolean ok) throws PersistenciaException
 	{
 		Connection con = conexion.getConnection();
 		

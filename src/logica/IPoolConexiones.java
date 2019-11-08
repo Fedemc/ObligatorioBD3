@@ -4,7 +4,7 @@ import logica.excepciones.PersistenciaException;
 
 public abstract interface IPoolConexiones 
 {
-	void LiberarConexion(IConexion conexion, boolean ok) throws PersistenciaException;
-	IConexion ObtenerConexiones(boolean modifica) throws PersistenciaException;
+	void liberarConexion(IConexion conexion, boolean ok) throws PersistenciaException;
+	IConexion obtenerConexiones(boolean modifica) throws PersistenciaException;
 
 }

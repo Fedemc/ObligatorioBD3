@@ -1,6 +1,8 @@
 package logica;
 
-public class DragQueen
+import java.io.Serializable;
+
+public class DragQueen implements Serializable
 {
 	private int nroPart;
 	private String nombre;
@@ -26,6 +28,10 @@ public class DragQueen
 	public int getCantVictorias()
 	{
 		return cantVictorias;
+	}
+	
+	public void sumarVictoria() {
+		cantVictorias++;
 	}
 	
 }

@@ -1,17 +1,22 @@
 package logica;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
+import java.util.Properties;
 
 import logica.excepciones.PersistenciaException;
 import logica.valueObjects.VODragQueenVictorias;
-import persistencia.daos.DAODragQueens;
+import persistencia.daos.DAODragQueensSQL;
+import persistencia.daos.IDAODragQueens;
 
-public class Temporada
+public class Temporada implements Serializable
 {
 	private int nroTemp;
 	private int anio;
 	private int cantCapitulos;
-	private DAODragQueens secuencia;
+	private IDAODragQueens secuencia;
 	
 	
 	public Temporada(int nroT, int anio, int cantCaps)
@@ -19,7 +24,16 @@ public class Temporada
 		nroTemp = nroT;
 		this.anio = anio;
 		cantCapitulos = cantCaps;
-		secuencia = new DAODragQueens(nroT);
+		
+		Properties prop = new Properties();
+		FabricaAbstracta fabrica = null;
+		
+		try {
+			prop.load(new FileInputStream("config/config.properties"));
+			secuencia = ((FabricaAbstracta) Class.forName(prop.getProperty("fabrica")).newInstance()).crearIDAODragQueens(nroT);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -38,7 +52,7 @@ public class Temporada
 		return cantCapitulos;
 	}
 	
-	public DAODragQueens getSecuencia()
+	public IDAODragQueens getSecuencia()
 	{
 		return secuencia;
 	}

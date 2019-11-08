@@ -40,9 +40,9 @@ public class MainServidor
 			System.out.println("1. Creando base de datos...");
 			
 			Statement stmt = con.createStatement();
-			stmt.executeUpdate("CREATE DATABASE IF NOT EXISTS dbdq;");
-			stmt.executeQuery("USE dbdq;");
-			System.out.println("Utilizando la base de datos dbdq");
+			stmt.executeUpdate("CREATE DATABASE IF NOT EXISTS " + prop.getProperty("DB") + ";");
+			stmt.executeQuery("USE " + prop.getProperty("DB") + ";");
+			System.out.println("Utilizando la base de datos " + prop.getProperty("DB"));
 			
 			// Creamos las tablas
 			System.out.println("2. Creando las tablas necesarias...");
