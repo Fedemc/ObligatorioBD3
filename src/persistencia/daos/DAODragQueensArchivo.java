@@ -37,20 +37,25 @@ public class DAODragQueensArchivo implements IDAODragQueens, Serializable {
 
 	public boolean esVacia(IConexion icon, int nroTemp) throws PersistenciaException {
 		Properties prop = new Properties();
-		
+		boolean vacia = true;
 		try {
 			prop.load(new FileInputStream("config/config.properties"));
 			File ruta = new File(prop.getProperty("rutaRespaldo"));
 			
-			for (File archivo : ruta.listFiles()) {
-				if (archivo.isFile() && archivo.getName().contains("dragqueens-" + nroTemp)) 
-					return true;
+			for (File archivo : ruta.listFiles()) 
+			{
+				if (archivo.isFile() && archivo.getName().contains("dragqueens-" + nroTemp))
+				{
+					vacia = false;
+					break;
+				}
+					
 			}
 		} catch (IOException e) {
 			throw new PersistenciaException(e.getMessage());
 		}
 		
-		return false;
+		return vacia;
 	}
 
 	public int largo(IConexion icon) throws PersistenciaException {
@@ -90,6 +95,7 @@ public class DAODragQueensArchivo implements IDAODragQueens, Serializable {
 				lista.remove(dq);
 				dq_aux.sumarVictoria();
 				lista.add(idx, dq_aux);
+				respaldarDatos(lista);
 				break;
 			}
 		}
@@ -100,7 +106,7 @@ public class DAODragQueensArchivo implements IDAODragQueens, Serializable {
 		DragQueen ganadora = null;
 		
 		for (DragQueen dq : lista) {
-			if (dq.getCantVictorias() > ganadora.getCantVictorias() || ganadora == null) {
+			if (ganadora == null || dq.getCantVictorias() > ganadora.getCantVictorias()) {
 				ganadora = dq;
 			}
 		}

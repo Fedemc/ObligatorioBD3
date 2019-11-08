@@ -36,20 +36,25 @@ public class DAOTemporadasArchivo implements IDAOTemporadas, Serializable {
 
 	public boolean esVacio(IConexion icon) throws PersistenciaException {
 		Properties prop = new Properties();
+		boolean vacio = true;
 		
 		try {
 			prop.load(new FileInputStream("config/config.properties"));
 			File ruta = new File(prop.getProperty("rutaRespaldo"));
-			
-			for (File archivo : ruta.listFiles()) {
-				if (archivo.isFile() && archivo.getName().contains("temporada")) 
-					return true;
+			for (File archivo : ruta.listFiles()) 
+			{
+				if (archivo.isFile() && archivo.getPath().contains("temporada"))
+				{
+					vacio = false;
+					break;
+				}
+					
 			}
 		} catch (IOException e) {
 			throw new PersistenciaException(e.getMessage());
 		}
 		
-		return false;
+		return vacio;
 	}
 
 	public List<VOTemporada> listarTemporadas(IConexion icon) throws PersistenciaException {
@@ -87,7 +92,8 @@ public class DAOTemporadasArchivo implements IDAOTemporadas, Serializable {
 			for (File archivo : ruta.listFiles()) {
 				if (archivo.isFile() && archivo.getName().contains("temporada")) {
 					String[] split = archivo.getName().split("-");
-					Temporada t = recuperarDatos(Integer.parseInt(split[1]));
+					split = split[1].split(".dat");
+					Temporada t = recuperarDatos(Integer.parseInt(split[0]));
 					if (t.getCantParticipantes(icon) > maxTemp)
 						maxTemp = t.getNroTemp();
 				}
