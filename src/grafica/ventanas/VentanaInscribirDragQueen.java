@@ -2,6 +2,8 @@ package grafica.ventanas;
 
 import grafica.controladores.ControladorInscribirDragQueen;
 import logica.excepciones.PersistenciaException;
+import logica.excepciones.TemporadaException;
+
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -79,7 +81,7 @@ public class VentanaInscribirDragQueen
 					cont.InscribirDragQueen(nom, nroTemp);
 					JOptionPane.showMessageDialog(frmInscribirDragQueen, "Drag Queen inscripta correctamente", "Resultado", JOptionPane.INFORMATION_MESSAGE);
 					frmInscribirDragQueen.dispose();
-				} catch (RemoteException | PersistenciaException e1) {
+				} catch (RemoteException | PersistenciaException | TemporadaException e1) {
 					JOptionPane.showMessageDialog(frmInscribirDragQueen, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}

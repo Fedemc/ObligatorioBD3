@@ -1,7 +1,10 @@
 package grafica.ventanas;
 
 import grafica.controladores.ControladorRegistrarVictoria;
+import logica.excepciones.DragQueenException;
 import logica.excepciones.PersistenciaException;
+import logica.excepciones.TemporadaException;
+
 import java.awt.event.*;
 import java.rmi.RemoteException;
 import java.awt.EventQueue;
@@ -111,7 +114,7 @@ public class VentanaRegistrarVictoria
 					cont.RegistrarVictoria(Integer.parseInt(nroParticipante), Integer.parseInt(nroTemporada));
 					JOptionPane.showMessageDialog(frmRegistrarVictoria, "Victoria registrada correctamente", "Resultado", JOptionPane.INFORMATION_MESSAGE);
 					frmRegistrarVictoria.dispose();
-				} catch (NumberFormatException | RemoteException | PersistenciaException e1) {
+				} catch (NumberFormatException | RemoteException | PersistenciaException | DragQueenException | TemporadaException e1) {
 					JOptionPane.showMessageDialog(frmRegistrarVictoria, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}				
 			}

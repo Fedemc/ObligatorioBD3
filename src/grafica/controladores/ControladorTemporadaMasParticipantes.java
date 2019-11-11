@@ -5,6 +5,7 @@ import grafica.ventanas.VentanaListarTemporadas;
 import grafica.ventanas.VentanaTemporadaMasParticipantes;
 import logica.IFachada;
 import logica.excepciones.PersistenciaException;
+import logica.excepciones.TemporadaException;
 import logica.valueObjects.VOTempMaxPart;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -22,7 +23,7 @@ public class ControladorTemporadaMasParticipantes
 		fachada = ControladorPrincipal.getInstancia().getFachada();
 	}
 	
-	public VOTempMaxPart TempMaxPart() throws PersistenciaException, RemoteException
+	public VOTempMaxPart TempMaxPart() throws PersistenciaException, RemoteException, TemporadaException
 	{
 		return fachada.temporadaConMasParticipantes();
 	}

@@ -2,6 +2,7 @@ package grafica.ventanas;
 
 import grafica.controladores.ControladorListarDragQueenGanadora;
 import logica.excepciones.PersistenciaException;
+import logica.excepciones.TemporadaException;
 import logica.valueObjects.VODragQueenVictorias;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -130,7 +131,7 @@ public class VentanaListarDragQueenGanadora
 		VODragQueenVictorias lista = null;
 		try {
 			 lista = cont.ListarDragQueenGanadora(Integer.parseInt(txtNroTemp.getText()));					
-		} catch (NumberFormatException | RemoteException | PersistenciaException e1) {
+		} catch (NumberFormatException | RemoteException | PersistenciaException | TemporadaException e1) {
 			JOptionPane.showMessageDialog(frmListarDragQueenGanadora, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		

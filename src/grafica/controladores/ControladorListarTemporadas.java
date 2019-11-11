@@ -4,6 +4,7 @@ import grafica.controladores.ControladorPrincipal;
 import grafica.ventanas.VentanaListarTemporadas;
 import logica.IFachada;
 import logica.excepciones.PersistenciaException;
+import logica.excepciones.TemporadaException;
 import logica.valueObjects.VOTemporada;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -21,7 +22,7 @@ public class ControladorListarTemporadas
 		fachada = ControladorPrincipal.getInstancia().getFachada();
 	}
 	
-	public List<VOTemporada> ListarTemporadas() throws RemoteException, PersistenciaException
+	public List<VOTemporada> ListarTemporadas() throws RemoteException, PersistenciaException, TemporadaException
 	{
 		return fachada.listarTemporadas();
 	}

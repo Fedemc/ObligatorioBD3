@@ -9,6 +9,7 @@ import javax.swing.table.DefaultTableModel;
 
 import grafica.controladores.ControladorTemporadaMasParticipantes;
 import logica.excepciones.PersistenciaException;
+import logica.excepciones.TemporadaException;
 import logica.valueObjects.VOTempMaxPart;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
@@ -96,7 +97,7 @@ public class VentanaTemporadaMasParticipantes
 		
 		try {
 			vo = cont.TempMaxPart();
-		} catch (RemoteException | PersistenciaException e) {
+		} catch (RemoteException | PersistenciaException | TemporadaException e) {
 			JOptionPane.showMessageDialog(frmListarTemporadas, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		

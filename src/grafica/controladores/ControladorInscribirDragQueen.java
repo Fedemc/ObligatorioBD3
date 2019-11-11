@@ -4,6 +4,7 @@ import grafica.controladores.ControladorPrincipal;
 import grafica.ventanas.VentanaInscribirDragQueen;
 import logica.IFachada;
 import logica.excepciones.PersistenciaException;
+import logica.excepciones.TemporadaException;
 import logica.valueObjects.VODragQueen;
 
 
@@ -20,7 +21,7 @@ public class ControladorInscribirDragQueen
 		fachada = ControladorPrincipal.getInstancia().getFachada();
 	}
 	
-	public void InscribirDragQueen(String nom, int nroTemp) throws PersistenciaException, RemoteException
+	public void InscribirDragQueen(String nom, int nroTemp) throws PersistenciaException, RemoteException, TemporadaException
 	{
 		fachada.inscribirDragQueen(new VODragQueen(nom, nroTemp));
 	}

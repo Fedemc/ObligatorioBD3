@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 
 import grafica.controladores.ControladorListarTemporadas;
 import logica.excepciones.PersistenciaException;
+import logica.excepciones.TemporadaException;
 import logica.valueObjects.VOTemporada;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -105,7 +106,7 @@ public class VentanaListarTemporadas
 		// Listamos las temporadas en pantalla
 		try {
 			lista = cont.ListarTemporadas();
-		} catch (RemoteException | PersistenciaException e1) {
+		} catch (RemoteException | PersistenciaException | TemporadaException e1) {
 			JOptionPane.showMessageDialog(frmListarTemporadas, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
 
