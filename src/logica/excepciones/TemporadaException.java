@@ -9,7 +9,7 @@ public class TemporadaException extends Exception
 		mensaje = msj;
 	}
 	
-	public String DarMensaje()
+	public String getMessage()
 	{
 		return mensaje;
 	}

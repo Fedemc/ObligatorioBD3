@@ -4,6 +4,7 @@ import grafica.controladores.ControladorPrincipal;
 import grafica.ventanas.VentanaNuevaTemporada;
 import logica.IFachada;
 import logica.excepciones.PersistenciaException;
+import logica.excepciones.TemporadaException;
 import logica.valueObjects.VOTemporada;
 
 import java.rmi.RemoteException;
@@ -21,7 +22,7 @@ public class ControladorNuevaTemporada
 		fachada = ControladorPrincipal.getInstancia().getFachada();
 	}
 	
-	public void nuevaTemporada(int nroT, int anio, int cantCaps) throws PersistenciaException, RemoteException
+	public void nuevaTemporada(int nroT, int anio, int cantCaps) throws PersistenciaException, RemoteException, TemporadaException
 	{
 		VOTemporada voT = new VOTemporada(nroT,anio,cantCaps);
 		fachada.nuevaTemporada(voT);

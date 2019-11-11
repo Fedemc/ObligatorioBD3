@@ -2,6 +2,8 @@ package grafica.ventanas;
 
 import grafica.controladores.ControladorNuevaTemporada;
 import logica.excepciones.PersistenciaException;
+import logica.excepciones.TemporadaException;
+
 import java.awt.event.*;
 import java.rmi.RemoteException;
 import java.awt.EventQueue;
@@ -123,7 +125,7 @@ public class VentanaNuevaTemporada
 					cont.nuevaTemporada(Integer.parseInt(nroTemp), Integer.parseInt(anio), Integer.parseInt(cantCaps));
 					JOptionPane.showMessageDialog(frmNuevaTemporada, "Temporada creada correctamente", "Resultado", JOptionPane.INFORMATION_MESSAGE);
 					frmNuevaTemporada.dispose();
-				} catch (NumberFormatException | RemoteException | PersistenciaException e1) {
+				} catch (NumberFormatException | RemoteException | PersistenciaException | TemporadaException e1) {
 					JOptionPane.showMessageDialog(frmNuevaTemporada, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 				}				
 			}

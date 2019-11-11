@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import logica.excepciones.DragQueenException;
 import logica.excepciones.PersistenciaException;
+import logica.excepciones.TemporadaException;
 import logica.valueObjects.VODragQueen;
 import logica.valueObjects.VODragQueenRegistrarVictoria;
 import logica.valueObjects.VODragQueenVictorias;
@@ -70,7 +72,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	}
 	
 	/* Registrar una nueva temporada */
-	public void nuevaTemporada(VOTemporada voT) throws RemoteException, PersistenciaException
+	public void nuevaTemporada(VOTemporada voT) throws RemoteException, PersistenciaException, TemporadaException
 	{
 		int nroTemp = voT.getNroTemp();
 		boolean existe=false;
@@ -99,7 +101,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 			else
 			{
 				pool.liberarConexion(icon, true);
-				throw new PersistenciaException("Ya existe una temporada registrada con ese nro de temporada.");
+				throw new TemporadaException("Ya existe una temporada registrada con ese nro de temporada.");
 			}
 		}
 		catch(PersistenciaException e)
@@ -110,7 +112,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	}
 	
 	/* Inscribir una nueva DragQueen */
-	public void inscribirDragQueen(VODragQueen voD) throws RemoteException, PersistenciaException
+	public void inscribirDragQueen(VODragQueen voD) throws RemoteException, PersistenciaException, TemporadaException
 	{
 		IConexion icon = null;
 		try
@@ -137,7 +139,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 			else
 			{
 				pool.liberarConexion(icon, true);
-				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
+				throw new TemporadaException("No existe una temporada registrada con ese nro de temporada.");
 			}
 		}
 		catch(PersistenciaException e)
@@ -148,7 +150,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	}
 	
 	/* Listar todas las temporadas */
-	public List<VOTemporada> listarTemporadas() throws RemoteException, PersistenciaException
+	public List<VOTemporada> listarTemporadas() throws RemoteException, PersistenciaException, TemporadaException
 	{
 		List<VOTemporada> resu = new ArrayList<VOTemporada>();
 		IConexion icon=null;
@@ -164,8 +166,15 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		
 		try
 		{
-			resu = diccio.listarTemporadas(icon);
-			pool.liberarConexion(icon, true);
+			if(!diccio.esVacio(icon))
+			{
+				resu = diccio.listarTemporadas(icon);
+				pool.liberarConexion(icon, true);
+			}
+			else
+			{
+				throw new TemporadaException("No hay temporadas registradas en el sistema.");
+			}			
 		}
 		catch(PersistenciaException e)
 		{
@@ -177,7 +186,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	}
 	
 	/* Listar las DragQueens dada una temporada */
-	public List<VODragQueenVictorias> listarDragQueensDeTemporada(int nroTemp) throws RemoteException, PersistenciaException
+	public List<VODragQueenVictorias> listarDragQueensDeTemporada(int nroTemp) throws RemoteException, PersistenciaException, TemporadaException
 	{
 		List<VODragQueenVictorias> resu = new ArrayList<VODragQueenVictorias>();
 		IConexion icon = null;
@@ -196,13 +205,21 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 			if(diccio.member(nroTemp, icon))
 			{
 				Temporada temp = diccio.find(nroTemp, icon);
-				resu = temp.listarDragQueens(icon);
-				pool.liberarConexion(icon, true);
+				if(temp.getCantParticipantes(icon) > 0)
+				{
+					resu = temp.listarDragQueens(icon);
+					pool.liberarConexion(icon, true);
+				}
+				else
+				{
+					pool.liberarConexion(icon, true);
+					throw new TemporadaException("La temporada no tiene participantes registrados.");
+				}				
 			}
 			else
 			{
 				pool.liberarConexion(icon, true);
-				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
+				throw new TemporadaException("No existe una temporada registrada con ese nro de temporada.");
 			}			
 		}
 		catch(PersistenciaException e)
@@ -215,7 +232,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 	}
 	
 	// Verificar q al menos exista una temporada
-	public VOTempMaxPart temporadaConMasParticipantes() throws RemoteException, PersistenciaException
+	public VOTempMaxPart temporadaConMasParticipantes() throws RemoteException, PersistenciaException, TemporadaException
 	{
 		VOTempMaxPart resu = null;
 		IConexion icon = null;
@@ -239,7 +256,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 			else
 			{
 				pool.liberarConexion(icon, true);
-				throw new PersistenciaException("No hay temporadas registradas.");
+				throw new TemporadaException("No hay temporadas registradas.");
 			}
 		} 
 		catch (PersistenciaException e) 
@@ -251,7 +268,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		return resu;
 	}
 	
-	public void registrarVictoria(VODragQueenRegistrarVictoria voRV) throws RemoteException, PersistenciaException
+	public void registrarVictoria(VODragQueenRegistrarVictoria voRV) throws RemoteException, PersistenciaException, DragQueenException, TemporadaException
 	{		
 		IConexion icon = null;
 		try
@@ -279,13 +296,13 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 				else
 				{
 					pool.liberarConexion(icon, true);
-					throw new PersistenciaException("No existe una DragQueen registrada con ese nro de participante.");
+					throw new DragQueenException("No existe una DragQueen registrada con ese nro de participante.");
 				}
 			}
 			else
 			{
 				pool.liberarConexion(icon, true);
-				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
+				throw new TemporadaException("No existe una temporada registrada con ese nro de temporada.");
 			}
 		}
 		catch(PersistenciaException e)
@@ -295,7 +312,7 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 		}
 	}
 	
-	public VODragQueenVictorias obtenerGanadoraDeTemporada(int nroTemp) throws RemoteException, PersistenciaException
+	public VODragQueenVictorias obtenerGanadoraDeTemporada(int nroTemp) throws RemoteException, PersistenciaException, TemporadaException
 	{
 		VODragQueenVictorias resu = new VODragQueenVictorias("",1,1,1);
 		boolean errorVOT = false, errorNoHayDQs = false;
@@ -322,13 +339,13 @@ public class Fachada extends UnicastRemoteObject implements IFachada
 				else
 				{
 					pool.liberarConexion(icon, true);
-					throw new PersistenciaException("La temporada no tiene participantes registrados.");
+					throw new TemporadaException("La temporada no tiene participantes registrados.");
 				}
 			}
 			else
 			{
 				pool.liberarConexion(icon, true);
-				throw new PersistenciaException("No existe una temporada registrada con ese nro de temporada.");
+				throw new TemporadaException("No existe una temporada registrada con ese nro de temporada.");
 			}						
 		}
 		catch(PersistenciaException e)
