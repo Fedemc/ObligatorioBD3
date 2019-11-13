@@ -1,5 +1,6 @@
 package persistencia.daos;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,8 +16,10 @@ import logica.valueObjects.VOTempMaxPart;
 import logica.valueObjects.VOTemporada;
 import persistencia.consultas.Consultas;
 
-public class DAOTemporadasSQL implements IDAOTemporadas
+public class DAOTemporadasSQL implements IDAOTemporadas, Serializable
 {
+	
+	private static final long serialVersionUID = 1L;
 	
 	public DAOTemporadasSQL()
 	{

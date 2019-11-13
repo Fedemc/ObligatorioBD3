@@ -1,5 +1,6 @@
 package persistencia.daos;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,8 +15,10 @@ import logica.valueObjects.VODragQueen;
 import logica.valueObjects.VODragQueenVictorias;
 import persistencia.consultas.Consultas;
 
-public class DAODragQueensSQL implements IDAODragQueens
+public class DAODragQueensSQL implements IDAODragQueens, Serializable
 {
+	private static final long serialVersionUID = 1L;
+	
 	private int nroTemp;
 	
 	public DAODragQueensSQL(int nroT)

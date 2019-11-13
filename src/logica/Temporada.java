@@ -13,6 +13,9 @@ import persistencia.daos.IDAODragQueens;
 
 public class Temporada implements Serializable
 {
+	
+	private static final long serialVersionUID = 1L;
+	
 	private int nroTemp;
 	private int anio;
 	private int cantCapitulos;

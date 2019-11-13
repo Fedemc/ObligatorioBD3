@@ -1,12 +1,14 @@
 package logica;
 
+import java.io.Serializable;
+
 import logica.excepciones.PersistenciaException;
 import persistencia.daos.DAODragQueensArchivo;
 import persistencia.daos.DAOTemporadasArchivo;
 import persistencia.daos.IDAODragQueens;
 import persistencia.daos.IDAOTemporadas;
 
-public class FabricaArchivo implements FabricaAbstracta {
+public class FabricaArchivo implements FabricaAbstracta, Serializable {
 
 	public IDAOTemporadas crearIDAOTemporadas() {
 		return new DAOTemporadasArchivo();

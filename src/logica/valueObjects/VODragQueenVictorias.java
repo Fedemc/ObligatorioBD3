@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class VODragQueenVictorias extends VODragQueen implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+	
 	private int nroPart;
 	private int cantVictorias;
 	

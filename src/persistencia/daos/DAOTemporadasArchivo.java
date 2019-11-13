@@ -20,6 +20,8 @@ import logica.valueObjects.VOTemporada;
 
 public class DAOTemporadasArchivo implements IDAOTemporadas, Serializable {
 	
+	private static final long serialVersionUID = 1L;
+	
 	public boolean member(int nroTemp, IConexion icon) throws PersistenciaException {
 		Temporada t = recuperarDatos(nroTemp);
 		
@@ -125,6 +127,7 @@ public class DAOTemporadasArchivo implements IDAOTemporadas, Serializable {
 				f.close();
 			}
 		}  catch (IOException e) {
+			e.printStackTrace();
 			throw new PersistenciaException("Error al recuperar el respaldo: " + e.getMessage());
 		} catch (ClassNotFoundException e) {
 			throw new PersistenciaException("Error al instanciar la temporada: " + e.getMessage());

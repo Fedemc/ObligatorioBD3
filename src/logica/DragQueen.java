@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 public class DragQueen implements Serializable
 {
+	
+	private static final long serialVersionUID = 1L;
+	
 	private int nroPart;
 	private String nombre;
 	private int cantVictorias;

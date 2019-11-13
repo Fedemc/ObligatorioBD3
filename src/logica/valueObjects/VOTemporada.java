@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class VOTemporada implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+	
 	private int nroTemp;
 	private int anio;
 	private int cantCapitulos;

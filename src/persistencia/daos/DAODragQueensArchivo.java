@@ -19,6 +19,8 @@ import logica.valueObjects.VODragQueenVictorias;
 
 public class DAODragQueensArchivo implements IDAODragQueens, Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private int nroTemp;
 	
 	public DAODragQueensArchivo(int nroT) {
